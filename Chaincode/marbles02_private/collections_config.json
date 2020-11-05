@@ -1,0 +1,38 @@
+[
+ {
+  "name": "ORG1-ORG2-marketPlace",
+  "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
+  "requiredPeerCount": 0,
+  "maxPeerCount": 3,
+  "blockToLive": 1000000,
+  "memberOnlyRead": true,
+  "memberOnlyWrite": true
+},
+{
+  "name": "ORG1-ORG2-dataSharing",
+  "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
+  "requiredPeerCount": 0,
+  "maxPeerCount": 3,
+  "blockToLive": 3,
+  "memberOnlyRead": true,
+  "memberOnlyWrite": true
+},
+ {
+   "name": "collection-ORG1",
+   "policy": "OR('Org1MSP.member')",
+   "requiredPeerCount": 0,
+   "maxPeerCount": 3,
+   "blockToLive":3,
+   "memberOnlyRead": true,
+   "memberOnlyWrite": true
+ },
+{
+  "name": "collection-ORG1-ACL",
+  "policy": "OR('Org1MSP.member')",
+  "requiredPeerCount": 0,
+  "maxPeerCount": 3,
+  "blockToLive": 3,
+  "memberOnlyRead": true,
+  "memberOnlyWrite": true
+}
+]
