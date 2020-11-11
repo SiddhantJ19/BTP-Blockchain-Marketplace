@@ -22,7 +22,7 @@ function extraSetup {
 function networkUp {
     # sets up orgs, peers, admins and channel
     cd $TEST_NETWORK_DIR
-    ./network.sh up createChannel -s couchdb
+    ./network.sh up createChannel -s couchdb -ca
 }
 
 function setOrg1Vars {
@@ -95,7 +95,6 @@ function commitChainCode {
 networkDown
 extraSetup
 networkUp
-
 packageChainCode
 installChaincodeOnBothOrgs
 approveChaincodeOnBothOrgs

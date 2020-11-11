@@ -1,0 +1,43 @@
+Read the high throughput chaincode
+The block listner function is provided for channel ledger tx not the private data. 
+Check off-chain chaincode and application if required
+
+Begin the code. FFS
+
+how to describe data ?
+single key update
+multiple json as data
+
+
+asset transfer private data
+1. Transfer asset - 
+    ORGB sets appraisal value for an asset. The asset is on sale by orgA
+    also set transferAgreement{assetID} in asset collection (marketplace)
+
+2. To compare the privatedatahash, the contract needs access to the location of
+    ORGB's MSP - No, GetPrivateDataHash(collection_name, key) returns just the hash of the data
+    the collection name however has to be known.
+
+
+    Trade ID as key for trade agreement
+
+
+PRivate data collections
+    1. Marketplace - both orgs
+    2. DeviceDeals - both orgs - The price at which the org wants to sell device's service
+    2. DevicesPrivateDetails - one org
+    3. DevicesDataCollection - one org - incoming data from devices stored in respective DEV_ID keys
+    4. ACL - oneORG - KEY = TradeID (asset + other org)
+    5. CommonCollection - Data sharing key = timestamp + tradeID
+
+
+1. ORGA adds a devices in the  - DevicePrivateDetails 
+2. Device sends data to ORGA's  - DevicesDataCollection
+3. ORGA ADMIN puts the data on marketplace and DeviceDeals 
+4. ORGB range queries the marketplace to see datas on sale
+5. ORGB ORGA communicates offchain for the deal
+6. ORGB updates its DeviceDeals with some price for the data. TradeID
+6.5 --> ORGB also puts the agreement on the marketplace, inorder to confirm that they are bidding as buyer {tradeID , buyerID, DeviceDeals Collection name}
+7 ORGA range queries with tradeID to see who are all bidders
+8.  Smartcontract checks with valid bidders (those whose privatedatahash matches with that of deal) and Creates ACL for them (maybe time based acc to the deal)
+9. The device's data is sent to all the ORGS with ACL True for respective Trade IDs
