@@ -3,14 +3,12 @@ package chaincode
 import (
     "encoding/json"
     "fmt"
+    "github.com/hyperledger/fabric-chaincode-go/pkg/statebased"
 
     "github.com/hyperledger/fabric-chaincode-go/shim"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-// constants
-const ORG1_DevicePrivateDetails = "collectionDevicePrivateDetailsOrg1"
-const ORG_Marketplace = "collectionMarketplace"
 
 // ----------------------- Device ------------------------------------------------
 func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface) error {
@@ -42,16 +40,18 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     if err != nil {}
 
 
-
     // 4. check if device already exists
     // collection = ORG1_DevicePrivateDetails, key = deviceID
-    deviceAsBytes, err := ctx.GetStub().GetPrivateData(ORG1_DevicePrivateDetails, device.ID)
+    privateDetailsCollection, err := getPrivateDetailsCollectionName()
+    if err != nil {}
+
+    deviceAsBytes, err := ctx.GetStub().GetPrivateData(privateDetailsCollection, device.ID)
     if err != nil {}
     if deviceAsBytes != nil {}
 
 
     //5. public details
-    clientID, err := ctx.GetClientIdentity().GetID()
+    clientID, err := ctx.GetClientIdentity().GetMSPID()
     if err != nil {}
 
     devicePublicDetails := DevicePublicDetails{
@@ -67,7 +67,15 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
 
     // 5.1 save to collection
     // Marketplace => key : deviceID
-    err = ctx.GetStub().PutPrivateData(ORG_Marketplace, device.ID, deviceAsBytes)
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
+
+    err = ctx.GetStub().PutPrivateData(marketplaceCollection, device.ID, deviceAsBytes)
+    if err != nil {}
+
+    // 5.5 set the endorsement policy such that an owner's endorsement is required to update marketplace details of an asset
+    // this is to prevent asset loss because of number of nodes wanting to change the asset details on a public marketplace
+    err = setDeviceStateBasedEndorsement(ctx, device.ID, clientID, marketplaceCollection)
     if err != nil {}
 
     // 6. private details
@@ -79,11 +87,13 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     if err != nil {}
 
     // 6.1 save to db
-    err = ctx.GetStub().PutPrivateData(ORG1_DevicePrivateDetails, device.ID, deviceAsBytes)
+    err = ctx.GetStub().PutPrivateData(privateDetailsCollection, device.ID, deviceAsBytes)
     if err != nil {}
 
     return nil
 }
+
+
 
 func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextInterface) error {
    // 1. get transient map
@@ -113,7 +123,10 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
 
    // ---------------- update description ----------------
    // get devicePublicDetails
-   deviceAsBytes, err = ctx.GetStub().GetPrivateData(ORG_Marketplace, deviceInput.ID)
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
+
+   deviceAsBytes, err = ctx.GetStub().GetPrivateData(marketplaceCollection, deviceInput.ID)
    if err != nil {}
 
    // unmarshall to DevicePublicDetails
@@ -121,7 +134,7 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
    err = json.Unmarshal(deviceAsBytes,&deviceMarketplace)
    if err != nil {}
 
-   // change the description
+   // change the description if device's owner == clientOrgId -> done by the state based ep
     deviceMarketplace.Description = deviceInput.Description
     deviceMarketplace.OnSale = deviceInput.OnSale
 
@@ -130,7 +143,7 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
    if err != nil {}
 
    // put in the db
-   err = ctx.GetStub().PutPrivateData(ORG_Marketplace, deviceInput.ID, deviceAsBytes)
+   err = ctx.GetStub().PutPrivateData(marketplaceCollection, deviceInput.ID, deviceAsBytes)
 
    return nil
 }
@@ -161,7 +174,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
     // ----------------- add Data -------------------
 
     // 4. getPrivateDetailsCollectionName(ctx)
-    privateDetailsCollection, err := getPrivateDetailsCollectionName(ctx)
+    privateDetailsCollection, err := getPrivateDetailsCollectionName()
     if err != nil {}
 
     //4. check if device exist
@@ -175,19 +188,45 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 
 
 // ----------------------- Trade ------------------------------------------------
-func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextInterface) error {
+
+// to be called by seller (only owner can sell their asset)
+// creates a trade agreement if seller is owner
+func (s *SmartContract) AgreeToSell(ctx contractapi.TransactionContextInterface, deviceId string) error {
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
+
+    deviceAsBytes, err := ctx.GetStub().GetPrivateData(marketplaceCollection, deviceId)
+    if err != nil {}
+
+    var device DevicePublicDetails
+    err = json.Unmarshal(deviceAsBytes, &device)
+    ownerOrgId := device.Owner
+    peerOrgId, err := shim.GetMSPID()
+    if ownerOrgId != peerOrgId {
+        return fmt.Errorf("Operation not permitted. Cannot sell someone else's asset")
+    }
+    return s.CreateTradeAgreement(ctx, deviceId)
+}
+
+// to be called by buyer
+// creates a trade agreement
+func (s *SmartContract) AgreeToBuy(ctx contractapi.TransactionContextInterface, deviceId string) error {
+    return s.CreateTradeAgreement(ctx, deviceId)
+}
+
+// not to be called directly
+func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextInterface, deviceId string) error {
     // 1. get transient map
     transientMap, err := ctx.GetStub().GetTransient()
     if err != nil { }
 
-    // 2.1 get Device from transientMap
+    // 2.1 get Trade agreement from transientMap
     tradeAgreementAsBytes := transientMap["_TradeAgreement"]
     if tradeAgreementAsBytes == nil {}
 
     // 2.2 unmarshal json to an object
     type TradeAgreementInputTransient struct {
         ID          string `json:"tradeId"`
-        DeviceId    string `json:"deviceId"`
         Price       int    `json:"tradePrice"`
     }
 
@@ -211,14 +250,19 @@ func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextI
     if err != nil {}
     if tradeAgreementAsBytes != nil {}
 
-    // marshal the trade input
-    tradeAgreementAsBytes, err = json.Marshal(tradeAgreementInput)
+    // create trade agreement
+    tradeAgreement := TradeAgreement{ID: tradeAgreementInput.ID, DeviceId: deviceId, Price: tradeAgreementInput.Price}
 
-    // save tradeagreement
+    // marshal the trade input
+    tradeAgreementAsBytes, err = json.Marshal(tradeAgreement)
+
+    // save trade agreement
     err = ctx.GetStub().PutPrivateData(tradeAgreementCollection, tradeAgreementInput.ID, tradeAgreementAsBytes)
     return nil
 }
 
+// to be called by buyer
+// creates a bidder interest token on marketplace
 func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextInterface) error {
     // 1. get transient map
     transientMap, err := ctx.GetStub().GetTransient()
@@ -231,8 +275,6 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     // 2.2 unmarshal json to an object
     type interestTokenInputTransient struct {
         ID              string `json:"tradeId"`
-        BidderID        string `json:"bidderId"`
-        DealsCollection string `json:"dealsCollection"` // required to generate private-data hash for the bidder's agreement collection:tradeID
     }
 
     var interestTokenInput interestTokenInputTransient
@@ -245,11 +287,60 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     err = verifyClientOrgMatchesPeerOrg(ctx)
     if err != nil {}
 
+    // --------------------------- create interest token ---------------------------------------------
+
+    // bidderId = clientId
+    bidderId, err := ctx.GetClientIdentity().GetMSPID()
+    if err != nil {}
+
+    // DealsCollection -> where all the deals are stored
+    dealsCollection, err := getDealsCollection() // required to generate private-data hash for the bidder's agreement collection:tradeID
+
+    // create Interesttoken
+    interestToken := InterestToken{
+        ID: interestTokenInput.ID,
+        BidderID: bidderId,
+        DealsCollection: dealsCollection,
+    }
+
+    // marshal interest token obj to bytes[] and store in Marketplace with Key
+    interestTokenAsBytes, err = json.Marshal(interestToken)
+    if err != nil {}
+
+    key:= generateKeyForInterestToken(interestToken.ID)
+
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
 
 
+    err = ctx.GetStub().PutPrivateData(marketplaceCollection,  key, interestTokenAsBytes)
+    if err != nil {}
+
+    return nil
 }
 
+
+
 // ============================ UTILS =========================================
+
+func generateKeyForInterestToken(deviceId string) string {
+    return "TRADE_" + deviceId
+}
+
+func generateKeyForDevice(deviceId string) string {
+    return "DEVICE_" + deviceId
+}
+
+func getMarketplaceCollection() (string, error) {
+    return "collection_Marketplace", nil
+}
+
+func getDealsCollection() (string, error) {
+    msp, err := shim.GetMSPID()
+    if err != nil {return "", err}
+
+    return "collection_" + msp + "dealsCollection", nil
+}
 
 func getTradeAgreementCollection() (string, error) {
     msp, err := shim.GetMSPID()
@@ -265,7 +356,6 @@ func getPrivateDetailsCollectionName() (string, error) {
     return "collection_" + msp + "privateDetails", nil
 }
 
-
 func verifyClientOrgMatchesPeerOrg(ctx contractapi.TransactionContextInterface) error {
 	clientMSP, err := ctx.GetClientIdentity().GetMSPID()
 	if err != nil {}
@@ -279,6 +369,22 @@ func verifyClientOrgMatchesPeerOrg(ctx contractapi.TransactionContextInterface) 
 	return nil
 }
 
+
+func setDeviceStateBasedEndorsement(ctx contractapi.TransactionContextInterface, deviceId string, orgId string, collection string) error {
+    // create a new state based policy for key = deviceId
+    ep, err := statebased.NewStateEP(nil)
+    if err != nil {}
+
+    // issue roles, here the owner org for a device
+    err = ep.AddOrgs(statebased.RoleTypePeer, orgId)
+    if err != nil {}
+
+    policy, err := ep.Policy()
+    if err != nil {}
+
+    err = ctx.GetStub().SetPrivateDataValidationParameter(collection, deviceId, policy)
+    return nil
+}
 
 
 // updateDeviceDescription - error

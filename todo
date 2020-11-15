@@ -50,7 +50,10 @@ PRivate data collections
 ------------------------------------------------------------------------------
 Collections and keys
 
-marketplace = deviceID
+marketplace
+    - deviceID
+    - tradeID
+
 DevicePrivateDetailsORG1 = deviceID
 
 
@@ -84,3 +87,53 @@ TODO
 1. write dataShare contracts
 2. Write Queries contracts
 3. Application
+
+------------------------
+Trade contract
+org1 and org2 uses createTradeAgreement to create an agreement template
+then org2 creates an interest token using CreateInterestToken
+
+Org1 queries Marketplace (getAllBidders(tradeIDKey))
+
+-----------------------------------------------------------------
+setDeviceStateBasedEndorsement -> sets an endorsementpolicy on the state. only owner peers can update
+is this for private collection or the channel world state only
+what is the hierarchy of endorsement policies for 
+    1. worldstate
+
+    2. privatedatacollection
+
+hierarchy --
+2 channels = 1 system channel + multiple application channels
+
+1. System channel level
+    members = ordering orgs(those who started the first ordering service) + consortium nodes (the joiners)
+    policies here - consensus used and how blocks are created
+2. Application channel level
+    members = a set of orgs from consortium orgs
+    policies = add/remove members from a channel + which orgs need to approve a chaincode before the chaincode is
+                defined or committed to the channel
+
+3. Access control list 
+    members = application channel members
+    policies = resource (getblockbynumber) access ????
+
+4. Smart contract
+    every Smartcontract function 
+    members = members defined for that Smartcontract
+    policy = only these members can and must endorse a given transaction
+
+5. modification policies
+    members who can modify the policies
+
+6. state-based endorsement
+    in our case we do not touch chaincode level endorsementpolicies
+    but for specific key value pairs we can have state-based endorsement
+    like owner should endorse a tx to update device details (which is public on private store not on ledger)
+----------------------------------------
+putonMP
+queryMP     (x)
+Agreetosell (tradeID)
+AgreetoBuy  (tradeID)
+InterestToken
+
