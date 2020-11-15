@@ -31,13 +31,56 @@ PRivate data collections
     5. CommonCollection - Data sharing key = timestamp + tradeID
 
 
-1. ORGA adds a devices in the  - DevicePrivateDetails 
+
+
+1. ORGA adds a devices in the  - DevicePrivateDetails and marketplace 
 2. Device sends data to ORGA's  - DevicesDataCollection
-3. ORGA ADMIN puts the data on marketplace and DeviceDeals 
+
 4. ORGB range queries the marketplace to see datas on sale
+
 5. ORGB ORGA communicates offchain for the deal
-6. ORGB updates its DeviceDeals with some price for the data. TradeID
+6. ORGA and ORGB updates respective DeviceDeals with some price for the data. TradeID
 6.5 --> ORGB also puts the agreement on the marketplace, inorder to confirm that they are bidding as buyer {tradeID , buyerID, DeviceDeals Collection name}
-7 ORGA range queries with tradeID to see who are all bidders
-8.  Smartcontract checks with valid bidders (those whose privatedatahash matches with that of deal) and Creates ACL for them (maybe time based acc to the deal)
+
+7 ORGA range queries marketplace with tradeID to see who are all bidders
+
+8. Smartcontract checks with valid bidders (those whose privatedatahash matches with that of deal) and Creates ACL for them (maybe time based acc to the deal)
 9. The device's data is sent to all the ORGS with ACL True for respective Trade IDs
+
+------------------------------------------------------------------------------
+Collections and keys
+
+marketplace = deviceID
+DevicePrivateDetailsORG1 = deviceID
+
+
+
+
+----------------------------------------------------------------------------------
+Marshalling - convert go object to json
+MarshalIndent
+    x = json.marshal(obj)
+    x == []byte("json_string")
+cannot do x.attr
+
+UnMarshalling - convert json to object
+    var dJson Message
+    err = json.Unmarshal(x, &dJson)
+
+there is no json string
+    json == []byte
+
+    GetPrivateData returns []byte != object so need unmarshalling
+    Putdata arg []byte so 
+    
+    GetPrivateData
+    Unmarshall to object
+    use object
+    Marshal object
+    Putdata
+
+----------------------------------------------------------------------------------
+TODO
+1. write dataShare contracts
+2. Write Queries contracts
+3. Application

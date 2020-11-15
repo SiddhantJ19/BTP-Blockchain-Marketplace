@@ -10,12 +10,13 @@ type SmartContract struct {
 	contractapi.Contract
 }
 
-// Device
+// DevicePublicDetails ...
 type DevicePublicDetails struct {
 	Owner       string `json:"owner"`
 	ID          string `json:"deviceId"`
 	Data        string `json:"dataDescription"`
 	Description string `json:"description"`
+	OnSale      bool    `json:"onSale"`
 }
 
 type DevicePrivateDetails struct {
@@ -27,7 +28,7 @@ type DevicePrivateDetails struct {
 type TradeAgreement struct { // the hash of respective trade agreements should match
 	ID       string `json:"tradeId"`
 	DeviceId string `json:"deviceId"`
-	Price    string `json:"tradePrice"`
+	Price    int `json:"tradePrice"`
 }
 
 type InterestToken struct { // token of interest passed by the bidder

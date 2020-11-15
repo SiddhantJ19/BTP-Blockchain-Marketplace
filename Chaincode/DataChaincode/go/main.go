@@ -11,7 +11,7 @@ func printError (err error) {
 }
 
 func main() {
-	mc, err := contractapi.NewChaincode(&chiancode.SmartContract{})
+	mc, err := contractapi.NewChaincode(&chaincode.SmartContract{})
 	printError(err)
 
 	err = mc.Start()

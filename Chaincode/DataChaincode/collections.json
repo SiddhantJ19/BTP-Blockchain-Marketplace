@@ -1,0 +1,86 @@
+[
+    {
+        "name": "collectionMarketplace",
+        "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 3,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member', 'Org2MSP.member')"
+        }
+    },
+    {
+        "name": "collectionDataShare",
+        "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 3,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member', 'Org2MSP.member')"
+        }
+    },
+    {
+        "name": "collectionDevicePrivateDetailsOrg1",
+        "policy": "OR('Org1MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 0,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member')"
+        }
+    },
+    {
+        "name": "collectionTradeAgreementsOrg2",
+        "policy": "OR('Org2MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 0,
+        "blockToLive": 0,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org2MSP.member')"
+        }
+    },
+    {
+        "name": "collectionTradeAgreementsOrg1",
+        "policy": "OR('Org1MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 0,
+        "blockToLive": 0,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member')"
+        }
+    },
+    {
+        "name": "collectionACLOrg1",
+        "policy": "OR('Org1MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 0,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member')"
+        }
+    },
+    {
+        "name": "collectionDeviceDataOrg1",
+        "policy": "OR('Org1MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 0,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member')"
+        }
+    }
+]
