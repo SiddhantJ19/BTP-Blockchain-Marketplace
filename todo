@@ -137,3 +137,23 @@ Agreetosell (tradeID)
 AgreetoBuy  (tradeID)
 InterestToken
 
+ShareData
+    - readInterestToken
+    - compare agreement hashes
+    - update ACL
+    -- addData should automatically add Data on Checkint the ACL
+
+November 16 -
+Complete Trade contracts
+
+Action Items - 
+Seperate into device, data and trade files
+device  = CUD
+data  = AddData, ACL
+Trade = Agreetosell, AgreetoBuy, Trade agreement, interest token, dataShare, invoke, revoke ACL
+
+---------------------------------------------------------------------------------------------
+createDevice
+    - get device details from transientmap
+    - key = _Device
+    

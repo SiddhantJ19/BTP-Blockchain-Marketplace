@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -6,14 +7,11 @@ import (
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-func printError (err error) {
-	fmt.Println(err.Error())
-}
 
 func main() {
 	mc, err := contractapi.NewChaincode(&chaincode.SmartContract{})
-	printError(err)
+	if err != nil { fmt.Println(err.Error()) }
 
 	err = mc.Start()
-	printError(err)
+	if err != nil { fmt.Println(err.Error()) }
 }
