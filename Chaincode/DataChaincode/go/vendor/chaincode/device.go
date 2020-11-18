@@ -41,7 +41,9 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     marketplaceCollection, err := getMarketplaceCollection()
     if err != nil {}
 
-    deviceAsBytes, err = ctx.GetStub().GetPrivateData(marketplaceCollection, deviceInput.ID)
+    deviceKey := generateKeyForDevice(deviceInput.ID)
+
+    deviceAsBytes, err = ctx.GetStub().GetPrivateData(marketplaceCollection, deviceKey)
     if err != nil {}
     if deviceAsBytes != nil { return fmt.Errorf("device with ID %v already exist", deviceInput.ID)}
 
@@ -64,12 +66,12 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     // 5.1 save to collection
     // Marketplace => key : deviceID
 
-    err = ctx.GetStub().PutPrivateData(marketplaceCollection, deviceInput.ID, deviceAsBytes)
+    err = ctx.GetStub().PutPrivateData(marketplaceCollection, deviceKey, deviceAsBytes)
     if err != nil {}
 
-    // 5.5 set the endorsement policy such that an owner's endorsement is required to update marketplace details of an asset
-    // this is to prevent asset loss because of more number of nodes wanting to change the asset details on a public marketplace
-    err = setDeviceStateBasedEndorsement(ctx, deviceInput.ID, clientOrgID, marketplaceCollection)
+    //// 5.5 set the endorsement policy such that an owner's endorsement is required to update marketplace details of an asset
+    //// this is to prevent asset loss because of more number of nodes wanting to change the asset details on a public marketplace
+    err = setDeviceStateBasedEndorsement(ctx, deviceKey, clientOrgID, marketplaceCollection)
     if err != nil {}
 
     // 6. private details
@@ -122,8 +124,11 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
     marketplaceCollection, err := getMarketplaceCollection()
     if err != nil {}
 
-    deviceAsBytes, err = ctx.GetStub().GetPrivateData(marketplaceCollection, deviceInput.ID)
-    if err != nil {}
+    key := generateKeyForDevice(deviceInput.ID)
+    deviceAsBytes, err = ctx.GetStub().GetPrivateData(marketplaceCollection, key)
+    if err != nil {
+        return fmt.Errorf("device %v does not exist \n %v" , key, err.Error())
+    }
 
     // unmarshall to DevicePublicDetails
     var deviceMarketplace DevicePublicDetails

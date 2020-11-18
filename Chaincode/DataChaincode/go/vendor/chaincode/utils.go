@@ -10,38 +10,44 @@ import (
 
 // ============================ UTILS =========================================
 
-func generateKeyForInterestToken(deviceId string) string {
-    return "TRADE_" + deviceId
+// ---------------------------keys for collection -------------------------
+
+func generateKeyForInterestToken(tradeId string) string {
+    return "TRADE_" + tradeId
 }
 
 func generateKeyForDevice(deviceId string) string {
     return "DEVICE_" + deviceId
 }
 
+// ----------------------Collection names---------------------------
+
 func getMarketplaceCollection() (string, error) {
     return "collection_Marketplace", nil
 }
 
-func getDealsCollection() (string, error) {
-    msp, err := shim.GetMSPID()
-    if err != nil {return "", err}
-
-    return "collection_" + msp + "dealsCollection", nil
-}
+//func getDealsCollection() (string, error) {
+//    msp, err := shim.GetMSPID()
+//    if err != nil {return "", err}
+//
+//    return msp + "_dealsCollection", nil
+//}
 
 func getTradeAgreementCollection() (string, error) {
     msp, err := shim.GetMSPID()
     if err != nil {return "", err}
 
-    return "collection_" + msp + "tradeAgreement", nil
+    return msp + "_tradeAgreementCollection", nil
 }
 
 func getPrivateDetailsCollectionName() (string, error) {
     msp, err := shim.GetMSPID()
     if err != nil {return "", err}
 
-    return "collection_" + msp + "privateDetails", nil
+    return msp + "_privateDetailsCollection", nil
 }
+
+// ------------------------------------------------------------------------
 
 func verifyClientOrgMatchesPeerOrg(ctx contractapi.TransactionContextInterface) error {
 	clientMSP, err := ctx.GetClientIdentity().GetMSPID()
@@ -56,7 +62,8 @@ func verifyClientOrgMatchesPeerOrg(ctx contractapi.TransactionContextInterface) 
 	return nil
 }
 
-func setDeviceStateBasedEndorsement(ctx contractapi.TransactionContextInterface, deviceId string, orgId string, collection string) error {
+
+func setDeviceStateBasedEndorsement(ctx contractapi.TransactionContextInterface, deviceKey string, orgId string, collection string) error {
     // create a new state based policy for key = deviceId
     ep, err := statebased.NewStateEP(nil)
     if err != nil {}
@@ -68,7 +75,7 @@ func setDeviceStateBasedEndorsement(ctx contractapi.TransactionContextInterface,
     policy, err := ep.Policy()
     if err != nil {}
 
-    err = ctx.GetStub().SetPrivateDataValidationParameter(collection, deviceId, policy)
+    err = ctx.GetStub().SetPrivateDataValidationParameter(collection, deviceKey, policy)
     return nil
 }
 

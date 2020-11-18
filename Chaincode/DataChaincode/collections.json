@@ -1,6 +1,6 @@
 [
     {
-        "name": "collectionMarketplace",
+        "name": "collection_Marketplace",
         "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
         "requiredPeerCount": 0,
         "maxPeerCount": 3,
@@ -12,19 +12,7 @@
         }
     },
     {
-        "name": "collectionDataShare",
-        "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
-        "requiredPeerCount": 0,
-        "maxPeerCount": 3,
-        "blockToLive": 3,
-        "memberOnlyRead": true,
-        "memberOnlyWrite": true,
-        "endorsementPolicy": {
-            "signaturePolicy": "OR('Org1MSP.member', 'Org2MSP.member')"
-        }
-    },
-    {
-        "name": "collectionDevicePrivateDetailsOrg1",
+        "name": "Org1MSP_privateDetailsCollection",
         "policy": "OR('Org1MSP.member')",
         "requiredPeerCount": 0,
         "maxPeerCount": 3,
@@ -36,10 +24,34 @@
         }
     },
     {
-        "name": "collectionTradeAgreementsOrg2",
+        "name": "Org2MSP_privateDetailsCollection",
         "policy": "OR('Org2MSP.member')",
         "requiredPeerCount": 0,
-        "maxPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 5,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org2MSP.member')"
+        }
+    },
+    {
+        "name": "Org1MSP_tradeAgreementCollection",
+        "policy": "OR('Org1MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive": 0,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true,
+        "endorsementPolicy": {
+            "signaturePolicy": "OR('Org1MSP.member')"
+        }
+    },
+    {
+        "name": "Org2MSP_tradeAgreementCollection",
+        "policy": "OR('Org2MSP.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
         "blockToLive": 0,
         "memberOnlyRead": true,
         "memberOnlyWrite": true,
@@ -48,19 +60,7 @@
         }
     },
     {
-        "name": "collectionTradeAgreementsOrg1",
-        "policy": "OR('Org1MSP.member')",
-        "requiredPeerCount": 0,
-        "maxPeerCount": 0,
-        "blockToLive": 0,
-        "memberOnlyRead": true,
-        "memberOnlyWrite": true,
-        "endorsementPolicy": {
-            "signaturePolicy": "OR('Org1MSP.member')"
-        }
-    },
-    {
-        "name": "collectionACLOrg1",
+        "name": "Org1MSP_dealsCollection",
         "policy": "OR('Org1MSP.member')",
         "requiredPeerCount": 0,
         "maxPeerCount": 3,
@@ -72,15 +72,15 @@
         }
     },
     {
-        "name": "collectionDeviceDataOrg1",
-        "policy": "OR('Org1MSP.member')",
+        "name": "Org2MSP_dealsCollection",
+        "policy": "OR('Org2MSP.member')",
         "requiredPeerCount": 0,
         "maxPeerCount": 3,
         "blockToLive": 0,
         "memberOnlyRead": true,
         "memberOnlyWrite": true,
         "endorsementPolicy": {
-            "signaturePolicy": "OR('Org1MSP.member')"
+            "signaturePolicy": "OR('Org2MSP.member')"
         }
     }
 ]

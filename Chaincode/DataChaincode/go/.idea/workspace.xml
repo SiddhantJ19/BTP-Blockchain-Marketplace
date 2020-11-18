@@ -14,12 +14,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1598089e-00ee-4a32-8149-0964ca6eed45" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/vendor/chaincode/data.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/chaincode/device.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/chaincode/trade.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../collections.json" beforeDir="false" afterPath="$PROJECT_DIR$/../collections.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/dataShare.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/chaincode/data.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/data.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/chaincode/device.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/device.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/chaincode/queries.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/queries.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/chaincode/structures.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/structures.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/chaincode/trade.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/trade.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/chaincode/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../network/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../network/setup.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../todo" beforeDir="false" afterPath="$PROJECT_DIR$/../../../todo" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,25 +113,25 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="448" y="205" width="1086" height="754" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605514789328" />
-    <state width="1805" height="528" key="GridCell.Tab.0.bottom" timestamp="1605515237382">
+    <state width="1805" height="528" key="GridCell.Tab.0.bottom" timestamp="1605553722426">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1805" height="528" key="GridCell.Tab.0.bottom/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605515237382" />
+    <state width="1805" height="528" key="GridCell.Tab.0.bottom/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722426" />
     <state width="1805" height="408" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1605447647127" />
-    <state width="1805" height="528" key="GridCell.Tab.0.center" timestamp="1605515237382">
+    <state width="1805" height="528" key="GridCell.Tab.0.center" timestamp="1605553722425">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1805" height="528" key="GridCell.Tab.0.center/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605515237382" />
+    <state width="1805" height="528" key="GridCell.Tab.0.center/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722425" />
     <state width="1805" height="408" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1605447647126" />
-    <state width="1805" height="528" key="GridCell.Tab.0.left" timestamp="1605515237382">
+    <state width="1805" height="528" key="GridCell.Tab.0.left" timestamp="1605553722425">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1805" height="528" key="GridCell.Tab.0.left/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605515237382" />
+    <state width="1805" height="528" key="GridCell.Tab.0.left/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722425" />
     <state width="1805" height="408" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1605447647125" />
-    <state width="1805" height="528" key="GridCell.Tab.0.right" timestamp="1605515237382">
+    <state width="1805" height="528" key="GridCell.Tab.0.right" timestamp="1605553722426">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1805" height="528" key="GridCell.Tab.0.right/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605515237382" />
+    <state width="1805" height="528" key="GridCell.Tab.0.right/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722426" />
     <state width="1805" height="408" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1605447647127" />
     <state x="482" y="187" key="SettingsEditor" timestamp="1605251658428">
       <screen x="67" y="27" width="1853" height="1053" />
@@ -138,15 +141,19 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="836" y="468" width="305" height="168" key="VCS.ChangelistChooser/67.27.1853.1053@67.27.1853.1053" timestamp="1605448359623" />
+    <state x="167" y="125" width="1653" height="855" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1605536741563">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="167" y="125" width="1653" height="855" key="com.intellij.history.integration.ui.views.FileHistoryDialog/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605536741563" />
     <state x="773" y="466" width="430" height="172" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1605331605369">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="773" y="466" width="430" height="172" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605331605369" />
-    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup" timestamp="1605513564131">
+    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup" timestamp="1605705720186">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605513564131" />
-    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1605446950235" />
+    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605519538038" />
+    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1605705720186" />
     <state x="717" y="465" width="542" height="174" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1605448311290">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>

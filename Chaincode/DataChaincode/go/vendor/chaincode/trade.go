@@ -13,8 +13,12 @@ func (s *SmartContract) AgreeToSell(ctx contractapi.TransactionContextInterface,
     marketplaceCollection, err := getMarketplaceCollection()
     if err != nil {}
 
-    deviceAsBytes, err := ctx.GetStub().GetPrivateData(marketplaceCollection, deviceId)
-    if err != nil {}
+    deviceKey := generateKeyForDevice(deviceId)
+
+    deviceAsBytes, err := ctx.GetStub().GetPrivateData(marketplaceCollection, deviceKey)
+    if err != nil {
+        return fmt.Errorf(err.Error())
+    }
 
     var device DevicePublicDetails
     err = json.Unmarshal(deviceAsBytes, &device)
@@ -97,6 +101,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     // 2.2 unmarshal json to an object
     type interestTokenInputTransient struct {
         ID              string `json:"tradeId"`
+        deviceId        string `json:"deviceId"`
     }
 
     var interestTokenInput interestTokenInputTransient
@@ -116,13 +121,14 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     if err != nil {}
 
     // DealsCollection -> where all the deals are stored
-    dealsCollection, err := getDealsCollection() // required to generate private-data hash for the bidder's agreement collection:tradeID
+    tradeAgreementCollection, err := getTradeAgreementCollection() // required to generate private-data hash for the bidder's agreement collection:tradeID
 
-    // create Interesttoken
+    // create Interest token
     interestToken := InterestToken{
         ID: interestTokenInput.ID,
+        deviceId: interestTokenInput.deviceId,
         BidderID: bidderOrgId,
-        DealsCollection: dealsCollection,
+        TradeAgreementCollection: tradeAgreementCollection,
     }
 
     // marshal interest token obj to bytes[] and store in Marketplace with Key

@@ -153,7 +153,27 @@ data  = AddData, ACL
 Trade = Agreetosell, AgreetoBuy, Trade agreement, interest token, dataShare, invoke, revoke ACL
 
 ---------------------------------------------------------------------------------------------
-createDevice
-    - get device details from transientmap
-    - key = _Device
-    
+Marketplace
+    TRADE_deviceId
+    DEVICE_deviceId
+
+DevicePrivateDetails
+    deviceID
+
+tradeAgreementCollection
+    tradeID
+
+test 5 smcs = 2 devices + 3 trades
+
+
+
+
+
+
+
+
+
+
+
+
+
