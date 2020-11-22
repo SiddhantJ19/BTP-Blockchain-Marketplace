@@ -144,7 +144,7 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
     if err != nil {}
 
     // put in the db
-    err = ctx.GetStub().PutPrivateData(marketplaceCollection, deviceInput.ID, deviceAsBytes)
+    err = ctx.GetStub().PutPrivateData(marketplaceCollection, key, deviceAsBytes)
 
     return nil
 }
