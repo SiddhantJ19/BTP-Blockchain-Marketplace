@@ -33,7 +33,7 @@ type TradeAgreement struct { // the hash of respective trade agreements should m
 
 type InterestToken struct { // token of interest passed by the bidder
 	ID              string `json:"tradeId"`         // unique key as TRADE_{deviceID} on Collection_Marketplace
-	deviceId        string `json:"deviceId"`        // search all biddings for this device
+	DeviceId        string `json:"deviceId"`        // search all biddings for this device
 	BidderID        string `json:"bidderId"`
     TradeAgreementCollection string `json:"dealsCollection"` // required to generate private-data hash for the bidder's agreement collection:tradeID
 }
