@@ -15,6 +15,13 @@ func (s *SmartContract) queryOnSaleDataMarketplace(ctx contractapi.TransactionCo
 
 //collection = MArketplace
 // key
-// queryBidders -> list of all InterestTokens for a tradeId
-
+// queryBidders -> InterestToken for a tradeId
+func (s *SmartContract) QueryBidderInterestToken(ctx contractapi.TransactionContextInterface, tradeId string) (InterestToken, error) {
+    return InterestToken{
+        DeviceId: "dev001",
+        ID: "tradeId001",
+        TradeAgreementCollection: "not-required",
+        BidderID: "Org2Msp",
+    }, nil
+}
 

@@ -165,10 +165,24 @@ tradeAgreementCollection
 
 test 5 smcs = 2 devices + 3 trades
 
+-----------------------------------------------------------
+Invoke Data sharing
+    - takes in a tradeID
+    - compare tradeAgreementHashes
+        - get corresponding tradeAgreementhash of owner org
+        - First find bidder, by querying its interest token
+        - get bidder's treadeAgreement
+    - updateACL {deviceId: OrgId}
 
+Revoke Data sharing
+    - takes in a tradeID
+    - queries ACL for this tradeID
+    - remove from ACL
 
-
-
+DataSharing
+    - check ACL for related OrgIds
+    - getSharingSpace(orgId)
+    - copy to all the sharing spaces
 
 
 

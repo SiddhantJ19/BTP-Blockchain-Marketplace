@@ -32,8 +32,8 @@ type TradeAgreement struct { // the hash of respective trade agreements should m
 }
 
 type InterestToken struct { // token of interest passed by the bidder
-	ID              string `json:"tradeId"`         // unique key as TRADE_{deviceID} on Collection_Marketplace
-	deviceId        string `json:"deviceId"`        // search all biddings for this device
+	ID              string `json:"tradeId"`         // search all biddings for this device
+	DeviceId        string `json:"deviceId"`        // unique key as TRADE_{deviceID} on Collection_Marketplace
 	BidderID        string `json:"bidderId"`
     TradeAgreementCollection string `json:"dealsCollection"` // required to generate private-data hash for the bidder's agreement collection:tradeID
 }
@@ -48,9 +48,14 @@ type DeviceData struct {
 }
 
 // ACL
+type ACLObject struct {
+    BuyerId string  `json:"buyerId"`
+    TradeID string `json:"tradeId"`
+}
+
 type DeviceACL struct {
 	// Device ID
 	// TradeID
 	ID      string `json:"deviceId"`
-	TradeID string `json:"tradeId"`
+    List     []ACLObject `json:"acl"`
 }

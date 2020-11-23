@@ -46,6 +46,12 @@ func getPrivateDetailsCollectionName() (string, error) {
 
     return msp + "_privateDetailsCollection", nil
 }
+func getACLCollection() (string, error) {
+    msp, err := shim.GetMSPID()
+    if err != nil {return "", err}
+
+    return msp + "_aclCollection", nil
+}
 
 // ------------------------------------------------------------------------
 

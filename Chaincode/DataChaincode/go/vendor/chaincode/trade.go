@@ -146,4 +146,3 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     return nil
 }
 
-

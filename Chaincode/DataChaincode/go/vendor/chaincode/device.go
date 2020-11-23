@@ -92,7 +92,6 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     return nil
 }
 
-
 func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextInterface) error {
     // 1. get transient map
     transientMap, err := ctx.GetStub().GetTransient()
