@@ -1,8 +1,11 @@
 const router = require('express').Router();
-const {registerDevice, updateDevice} = require('./controllers')
+const {registerDevice, updateDevice, agreeToSell} = require('./controllers')
 
 router.post('/register',registerDevice) // register a new device
 router.post('/update',updateDevice) // update device details
+
+
+router.post('/sell',agreeToSell) // update device details
 
 /*
 router.post('/update',updateDeviceData) // update existing device

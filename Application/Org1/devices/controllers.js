@@ -41,13 +41,12 @@ exports.updateDevice = async (req, res) => {
     const assetDetails = {
         'deviceId': req.body.deviceId,
         'description': req.body.description,
-        // 'dataDescription': req.body.dataDescription,
         'on_sale': req.body.on_sale
     }
     //
-    // if (!(assetDetails.deviceId && assetDetails.description && assetDetails.dataDescription && assetDetails.on_sale)) {
-    //     return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, description, dataDescription, onSale"})
-    // }
+    if (!(assetDetails.deviceId !== undefined && assetDetails.description !== undefined && assetDetails.on_sale !== undefined)) {
+        return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, description, on_sale"})
+    }
     console.log('\n--> Submit Transaction: UpdateDeviceDetails, ');
     let createDeviceTxn = config.contract.createTransaction('UpdateDeviceDetails')
     const transientMapData = Buffer.from(JSON.stringify(assetDetails));
@@ -64,6 +63,38 @@ exports.updateDevice = async (req, res) => {
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
     res.status(200).send({"status":"Device Updated", "data": JSON.parse(prettyJSONString(txResult.toString()))})
+}
+
+exports.agreeToSell = async (req, res) => {
+    const tradeDetails = {
+        'deviceId': req.body.deviceId,
+        'tradeId': req.body.tradeId,
+        'tradePrice': req.body.tradePrice,
+    }
+
+    if (!(tradeDetails.tradeId && tradeDetails.tradePrice && tradeDetails.deviceId)) {
+        return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, description, dataDescription, onSale"})
+    }
+
+    console.log('\n--> Submit Transaction: AgreeToSell, ');
+    let tradeTx = config.contract.createTransaction('AgreeToSell')
+    const transientMapData = Buffer.from(JSON.stringify(tradeDetails));
+    tradeTx.setTransient({
+        _TradeAgreement: transientMapData
+    });
+
+    const result = await tradeTx.submit(tradeDetails.deviceId);
+    console.log('*** Result:');
+    console.log(result)
+
+
+    console.log('\n--> Submit Transaction: GetTradeAgreement');
+    const txResult = await config.contract.evaluateTransaction('GetTradeAgreement', tradeDetails.tradeId);
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    res.status(200).send({"status":"Trade Agreement Created", "data": JSON.parse(prettyJSONString(txResult.toString()))})
+
+
 }
 
 /*
