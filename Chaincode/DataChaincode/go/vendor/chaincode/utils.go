@@ -20,6 +20,9 @@ func generateKeyForDevice(deviceId string) string {
     return "DEVICE_" + deviceId
 }
 
+func generateKeyForDevicedata(deviceID string) string {
+	return "DATA_" + deviceID
+}
 // ----------------------Collection names---------------------------
 
 func getMarketplaceCollection() (string, error) {
