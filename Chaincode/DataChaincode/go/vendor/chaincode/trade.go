@@ -126,7 +126,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     // create Interest token
     interestToken := InterestToken{
         ID: interestTokenInput.ID,
-        deviceId: interestTokenInput.deviceId,
+        DeviceId: interestTokenInput.deviceId,
         BidderID: bidderOrgId,
         TradeAgreementCollection: tradeAgreementCollection,
     }
