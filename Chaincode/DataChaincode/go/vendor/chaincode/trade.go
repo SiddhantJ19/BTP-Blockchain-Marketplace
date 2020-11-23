@@ -101,7 +101,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     // 2.2 unmarshal json to an object
     type interestTokenInputTransient struct {
         ID              string `json:"tradeId"`
-        deviceId        string `json:"deviceId"`
+        DeviceId        string `json:"deviceId"`
     }
 
     var interestTokenInput interestTokenInputTransient
@@ -126,7 +126,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     // create Interest token
     interestToken := InterestToken{
         ID: interestTokenInput.ID,
-        deviceId: interestTokenInput.deviceId,
+        DeviceId: interestTokenInput.DeviceId,
         BidderID: bidderOrgId,
         TradeAgreementCollection: tradeAgreementCollection,
     }

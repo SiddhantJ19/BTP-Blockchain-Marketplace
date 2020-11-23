@@ -20,6 +20,9 @@ func generateKeyForDevice(deviceId string) string {
     return "DEVICE_" + deviceId
 }
 
+func generateKeyForDevicedata(deviceID string) string {
+	return "DATA_" + deviceID
+}
 // ----------------------Collection names---------------------------
 
 func getMarketplaceCollection() (string, error) {
@@ -52,7 +55,9 @@ func getACLCollection() (string, error) {
 
     return msp + "_aclCollection", nil
 }
-
+func getSharingCollection(seller string, buyer string) (string, error) {
+    return seller + "_" + buyer + "_shareCollection", nil
+}
 // ------------------------------------------------------------------------
 
 func verifyClientOrgMatchesPeerOrg(ctx contractapi.TransactionContextInterface) error {

@@ -13,12 +13,12 @@ func (s *SmartContract) invokeDataDistribution(ctx contractapi.TransactionContex
     if err != nil {}
 
     // get Device Id from interest token
-    bidderIntrestToken, err := s.QueryBidderInterestToken(ctx, tradeId)
+    bidderIntrestToken, err := s.QueryInterestTokenFromTradeId(ctx, tradeId)
     if err != nil {}
 
-    deviceId := bidderIntrestToken.DeviceId
-    bidderId := bidderIntrestToken.BidderID
-    bidderTradeAgreementCollection := bidderIntrestToken.TradeAgreementCollection
+    deviceId := bidderIntrestToken[0].DeviceId
+    bidderId := bidderIntrestToken[0].BidderID
+    bidderTradeAgreementCollection := bidderIntrestToken[0].TradeAgreementCollection
 
     // check client org is the owner
     err = verifyClientOrgMatchesOwner(ctx, deviceId)
