@@ -4,6 +4,7 @@ import (
     "encoding/json"
     "fmt"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
+    "errors"
 )
 
 func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface) error {
@@ -100,7 +101,9 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
 
     // 2.1 get Device from transientMap
     deviceAsBytes := transientMap["_Device"]
-    if deviceAsBytes == nil {}
+    if deviceAsBytes == nil {
+        return errors.New("No input")
+    }
 
     // 2.2 unmarshal json to an object
     type DeviceTransientInput struct {
@@ -111,7 +114,9 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
 
     var deviceInput DeviceTransientInput
     err = json.Unmarshal(deviceAsBytes, &deviceInput)
-    if err != nil {}
+    if err != nil {
+        return err
+    }
 
     // 2.3 validate non empty fields
 
@@ -147,4 +152,25 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
     err = ctx.GetStub().PutPrivateData(marketplaceCollection, key, deviceAsBytes)
 
     return nil
+}
+
+
+func (s *SmartContract) GetDeviceDetails(ctx contractapi.TransactionContextInterface, deviceId string) (DevicePublicDetails, error) {
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
+    var deviceMarketplace DevicePublicDetails
+
+    key := generateKeyForDevice(deviceId)
+    deviceAsBytes, derr := ctx.GetStub().GetPrivateData(marketplaceCollection, key)
+    if derr != nil {
+        return deviceMarketplace, fmt.Errorf("device %v does not exist \n %v" , key, err.Error())
+    }
+
+
+    err = json.Unmarshal(deviceAsBytes,&deviceMarketplace)
+    if err != nil {}
+
+    return deviceMarketplace, nil
+
+
 }
