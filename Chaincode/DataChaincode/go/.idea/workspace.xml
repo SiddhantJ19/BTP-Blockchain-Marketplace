@@ -14,28 +14,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1598089e-00ee-4a32-8149-0964ca6eed45" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/base/AppUtil.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/base/CAUtil.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/config/base.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/devices/controllers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/devices/routes.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/marketplace/controllers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/marketplace/routes.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/server.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/users/controllers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/users/routes.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/wallet/admin.id" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../Application/Org1/wallet/adth.id" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/chaincode/data_trial.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../collections.json" beforeDir="false" afterPath="$PROJECT_DIR$/../collections.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/data.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/data.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/dataDistribution.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/dataDistribution.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/device.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/device.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/queries.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/queries.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/structures.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/structures.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/trade.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/trade.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../peer_commands.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../peer_commands.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,11 +154,11 @@
     </state>
     <state x="773" y="466" width="430" height="172" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605331605369" />
     <state x="773" y="466" width="430" height="172" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/67.27.1853.1053@67.27.1853.1053" timestamp="1606154037911" />
-    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup" timestamp="1606153652800">
+    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup" timestamp="1606228647393">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605519538038" />
-    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1606153652800" />
+    <state x="656" y="257" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1606228647393" />
     <state x="717" y="465" width="542" height="174" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1605448311290">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>

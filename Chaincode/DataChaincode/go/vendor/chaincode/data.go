@@ -77,6 +77,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 		Timestamp: time.Now(),
 		Data: deviceInput.Data,
 	}
+	newDataEntryAsBytes, err := json.Marshal(newDataEntry)
 	deviceAllData.ID = deviceInput.ID
 
 	deviceAllData.Data = append(deviceAllData.Data, newDataEntry )
@@ -99,12 +100,12 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
     aclCollection, _ := getACLCollection()
     deviceACLAsBytes, err := ctx.GetStub().GetPrivateData(aclCollection, deviceInput.ID)
     var deviceACL DeviceACL
-    err = json.Unmarshal(deviceACLAsBytes, deviceACL)
+    err = json.Unmarshal(deviceACLAsBytes, &deviceACL)
 
     ownerMSP, err := shim.GetMSPID();
     for _, aclObject := range deviceACL.List {
         sharingCollection, _ := getSharingCollection(ownerMSP, aclObject.BuyerId)
-        err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, deviceACLAsBytes)
+        err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, newDataEntryAsBytes)
     }
 	return nil
 }

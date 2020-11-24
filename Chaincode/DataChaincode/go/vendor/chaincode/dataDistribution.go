@@ -7,19 +7,21 @@ import (
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-func (s *SmartContract) invokeDataDistribution(ctx contractapi.TransactionContextInterface, tradeId string) error {
+func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContextInterface, tradeId string) error {
     // verify client's org == peer's org
     err := verifyClientOrgMatchesPeerOrg(ctx)
     if err != nil {}
 
     // get Device Id from interest token
     bidderIntrestToken, err := s.QueryInterestTokenFromTradeId(ctx, tradeId)
-    if err != nil {}
+    if err != nil {
+        return fmt.Errorf("Cannot get BidderInterestToken, %v", err.Error())
+    }
 
     deviceId := bidderIntrestToken[0].DeviceId
-    bidderId := bidderIntrestToken[0].BidderID
+    //bidderId := bidderIntrestToken[0].BidderID
     bidderTradeAgreementCollection := bidderIntrestToken[0].TradeAgreementCollection
-
+    fmt.Println(bidderIntrestToken[0])
     // check client org is the owner
     err = verifyClientOrgMatchesOwner(ctx, deviceId)
     if err != nil {}
@@ -33,38 +35,43 @@ func (s *SmartContract) invokeDataDistribution(ctx contractapi.TransactionContex
     if err != nil {
         return err
     }
-
-    // updateACL
-    err = AddToACL(ctx, bidderId, tradeId, deviceId)
-    if err != nil {}
-
     return nil
 }
 
-
-// ----------------------------- Data Sharing Utils --------------------------------------------
-func AddToACL(ctx contractapi.TransactionContextInterface, bidderId string, tradeId string, deviceId string) error {
+func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bidderId string, tradeId string, deviceId string) error {
     newACLObject := ACLObject{
         TradeID: tradeId,
         BuyerId: bidderId,
     }
     aclCollection, err := getACLCollection()
-
+    fmt.Println(aclCollection)
+    fmt.Printf("%s %s %s \n\n", bidderId, tradeId, deviceId)
     aclAsBytes, err := ctx.GetStub().GetPrivateData(aclCollection, deviceId)
     if err != nil {}
+
     var acl DeviceACL
     err = json.Unmarshal(aclAsBytes, &acl)
+    fmt.Printf("ACL %v", acl)
 
     acl.List = append(acl.List, newACLObject)
+    fmt.Printf("ACL %v", acl)
 
     aclAsBytes, err = json.Marshal(acl)
-    if err != nil {}
+    if err != nil {
+        return fmt.Errorf("Marshalling Error %v", err.Error())
+    }
 
     err = ctx.GetStub().PutPrivateData(aclCollection, deviceId, aclAsBytes)
-    if err != nil {}
+    if err != nil {
+        fmt.Println(err.Error())
+       return fmt.Errorf("Error Putting in ACL %v", err.Error())
+    }
+    fmt.Println("^^^^^^^^^^^^")
     return nil
 }
 
+
+// ----------------------------- Data Sharing Utils --------------------------------------------
 func verifyTradeConditions(ctx contractapi.TransactionContextInterface, bidderCollection string, sellerCollection string, key string) error {
     bidderAgreementHash, err := ctx.GetStub().GetPrivateDataHash(bidderCollection, key)
     if err != nil {}
