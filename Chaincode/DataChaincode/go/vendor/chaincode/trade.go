@@ -5,6 +5,7 @@ import (
     "fmt"
     "github.com/hyperledger/fabric-chaincode-go/shim"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
+    "errors"
 )
 
 // to be called by seller (only owner can sell their asset)
@@ -146,3 +147,38 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     return nil
 }
 
+
+func (s *SmartContract) GetTradeAgreement(ctx contractapi.TransactionContextInterface, tradeId string) (TradeAgreement, error) {
+    tradeAgreementCollection, err := getTradeAgreementCollection()
+    if err != nil {}
+
+    var tradeAgreementObject TradeAgreement;
+    // check if tradeAgreement is present in ORG's TradeAgreements collection
+    tradeAgreementAsBytes, err := ctx.GetStub().GetPrivateData(tradeAgreementCollection, tradeId)
+    if err != nil {
+        return tradeAgreementObject, errors.New("Trade does not exist")
+    }
+
+    err = json.Unmarshal(tradeAgreementAsBytes,&tradeAgreementObject)
+    if err != nil {}
+
+    return tradeAgreementObject, nil
+}
+
+func (s *SmartContract) GetInterestToken(ctx contractapi.TransactionContextInterface, tradeId string) (InterestToken, error) {
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
+
+    var interestTokenObject InterestToken;
+    // check if tradeAgreement is present in ORG's TradeAgreements collection
+    tradekey := generateKeyForInterestToken(tradeId)
+    interestTokenAsBytes, errd := ctx.GetStub().GetPrivateData(marketplaceCollection, tradekey)
+    if errd != nil {
+        return interestTokenObject, errors.New("This Interest Token does not exist")
+    }
+
+    err = json.Unmarshal(interestTokenAsBytes,&interestTokenObject)
+    if err != nil {}
+
+    return interestTokenObject, nil
+}
