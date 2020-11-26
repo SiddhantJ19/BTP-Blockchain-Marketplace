@@ -30,15 +30,30 @@ exports.getInterestTokensForDevice = async (req, res) => {
     res.status(200).send({"status":"Query Successful", "data": JSON.parse(prettyJSONString(txResult.toString()))})
 }
 
-exports.submitInterestToken = async (req, res) => {
+exports.wishToBuy = async (req, res) => {
+    // First Create agreetoBuy then create interest Token
+
     const tradeDetails = {
         'tradeId': req.body.tradeId,
         'deviceId': req.body.deviceId,
+        'tradePrice': req.body.tradePrice
     }
-
     if (!(tradeDetails.tradeId && tradeDetails.deviceId)) {
         return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, description, dataDescription, onSale"})
     }
+
+
+    // Agree to buy tx
+    console.log('\n--> Submit Transaction: Agree to buy, ');
+    let agreeToBuyTx = config.contract.createTransaction('AgreeToBuy')
+    const ABTransientMapData = Buffer.from(JSON.stringify(tradeDetails));
+    agreeToBuyTx.setTransient({
+        _TradeAgreement: ABTransientMapData
+    });
+    const ABResult = await agreeToBuyTx.submit();
+    console.log('*** Agree To Buy Result:');
+    console.log(ABResult)
+
 
     console.log('\n--> Submit Transaction: CreateInterestToken, ');
     let tradeTx = config.contract.createTransaction('CreateInterestToken')
