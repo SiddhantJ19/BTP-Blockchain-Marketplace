@@ -79,7 +79,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 		Timestamp: time.Now(),
 		Data: deviceInput.Data,
 	}
-	newDataEntryAsBytes, err := json.Marshal(newDataEntry)
+	//newDataEntryAsBytes, err := json.Marshal(newDataEntry)
 	deviceAllData.ID = deviceInput.ID
 
 	deviceAllData.Data = append(deviceAllData.Data, newDataEntry )
@@ -110,7 +110,25 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
     ownerMSP, err := ctx.GetClientIdentity().GetMSPID()
     for _, aclObject := range deviceACL.List {
         sharingCollection, _ := getSharingCollection(ownerMSP, aclObject.BuyerId)
-        err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, newDataEntryAsBytes)
+
+		sharedDeviceAllDataAsBytes, err := ctx.GetStub().GetPrivateData(sharingCollection, devicedataKey)
+		if err != nil {
+			sharedDeviceAllDataAsBytes = []byte("{}")
+		}
+		var sharedDeviceAllData DeviceData;
+		err = json.Unmarshal(sharedDeviceAllDataAsBytes,&sharedDeviceAllData)
+		if err != nil {
+
+		}
+
+
+		sharedDeviceAllData.Data = append(sharedDeviceAllData.Data, newDataEntry )
+		sharedDeviceAllDataAsBytes, serr := json.Marshal(sharedDeviceAllData)
+		if serr != nil {
+			return err;
+		}
+
+        err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, sharedDeviceAllDataAsBytes)
     }
 	return nil
 }
@@ -190,5 +208,62 @@ func (s *SmartContract) QueryPrivateData(ctx contractapi.TransactionContextInter
 	}
 
 	return assets, nil
+
+}
+
+
+func (s *SmartContract) GetDeviceSharedAllData(ctx contractapi.TransactionContextInterface, ownerOrg string, deviceId string) ([]DeviceDataObject, error) {
+	selfMsp, mspErr :=ctx.GetClientIdentity().GetMSPID()
+	if mspErr != nil {
+
+		return nil, mspErr
+	}
+	sharedDevicesDetailsCollection, _ := getSharingCollection(ownerOrg,selfMsp)
+	deviceDataKey := generateKeyForDevicedata(deviceId)
+
+	deviceDataAsBytes, err := ctx.GetStub().GetPrivateData(sharedDevicesDetailsCollection, deviceDataKey)
+	var dataObjects []DeviceDataObject
+	if err != nil {
+		return nil, errors.New("Device or data does not exist")
+	}
+
+	var deviceAllData DeviceData;
+	err = json.Unmarshal(deviceDataAsBytes,&deviceAllData)
+	if err != nil {
+		return nil, errors.New("Device or data does not exist")
+	}
+
+	dataObjects = deviceAllData.Data;
+
+	return dataObjects, nil
+
+}
+
+func (s *SmartContract) GetDeviceSharedLatestData(ctx contractapi.TransactionContextInterface, ownerOrg string, deviceId string) (*DeviceDataObject, error) {
+	selfMsp, mspErr :=ctx.GetClientIdentity().GetMSPID()
+	if mspErr != nil {
+
+		return nil, mspErr
+	}
+	sharedDevicesDetailsCollection, _ := getSharingCollection(ownerOrg,selfMsp)
+
+	deviceDataKey := generateKeyForDevicedata(deviceId)
+
+	deviceDataAsBytes, err := ctx.GetStub().GetPrivateData(sharedDevicesDetailsCollection, deviceDataKey)
+	var data DeviceDataObject
+	if err != nil {
+		return nil, errors.New("Device or data does not exist")
+	}
+
+	var deviceAllData DeviceData;
+	err = json.Unmarshal(deviceDataAsBytes,&deviceAllData)
+	if err != nil {
+		return nil, errors.New("Device or data does not exist")
+	}
+
+	dataObjects := deviceAllData.Data;
+
+	data = dataObjects[len(dataObjects) - 1]
+	return &data, nil
 
 }

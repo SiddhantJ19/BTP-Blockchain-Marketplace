@@ -36,6 +36,32 @@ func (t *SmartContract) QueryDevices(ctx contractapi.TransactionContextInterface
    return constructPublicDevicesQueryResponseFromIterator(resultsIterator)
 }
 
+func (s *SmartContract) QuerySharedDevices(ctx contractapi.TransactionContextInterface, ownerOrg string) ([]string, error) {
+	selfMsp, mspErr :=ctx.GetClientIdentity().GetMSPID()
+	if mspErr != nil {
+
+		return nil, mspErr
+	}
+	sharedDevicesDetailsCollection, _ := getSharingCollection(ownerOrg,selfMsp)
+
+	queryString := fmt.Sprintf(`{"selector":{"_id":{"$regex":"DATA*"}}}`)
+
+	resultsIterator, err := getQueryResultForQueryString(ctx, sharedDevicesDetailsCollection, queryString)
+	if err != nil {
+		return nil, err
+	}
+
+	fullData, err := constructDevicesDataQueryResponseFromIterator(resultsIterator)
+
+	var devicesList []string
+
+	for d := range fullData {
+		devicesList = append(devicesList, fullData[d].ID)
+	}
+
+	return devicesList, nil
+}
+
 //collection = MArketplace
 // key
 // queryBidders -> InterestToken for a tradeId
@@ -122,3 +148,20 @@ func constructInterestTokensQueryResponseFromIterator(resultsIterator shim.State
 	return assets, nil
 }
 
+func constructDevicesDataQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]DeviceData, error) {
+	var assets []DeviceData
+	for resultsIterator.HasNext() {
+		queryResult, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var asset DeviceData
+		err = json.Unmarshal(queryResult.Value, &asset)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, asset)
+	}
+
+	return assets, nil
+}
