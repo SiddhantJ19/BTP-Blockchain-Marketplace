@@ -3,7 +3,7 @@ package chaincode
 import (
     "fmt"
     "github.com/hyperledger/fabric-chaincode-go/pkg/statebased"
-
+	"sort"
     "github.com/hyperledger/fabric-chaincode-go/shim"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -56,7 +56,12 @@ func getACLCollection(ctx contractapi.TransactionContextInterface) (string, erro
     return msp + "_aclCollection", nil
 }
 func getSharingCollection(seller string, buyer string) (string, error) {
-    return seller + "_" + buyer + "_shareCollection", nil
+    var temparr []string
+    temparr = append(temparr, seller)
+    temparr = append(temparr, buyer)
+
+	sort.Strings(temparr)
+	return temparr[0] + "_" + temparr[1] + "_shareCollection", nil
 }
 // ------------------------------------------------------------------------
 
