@@ -218,13 +218,96 @@ exports.confirmSell = async (req, res) => {
     const tx1Result = await config.contract.evaluateTransaction('InvokeDataDistribution', tradeDetails.tradeId);
     console.log(`*** Verify Trade Result: ${tx1Result.toString()}`);
 
-    
+
     let aclTx = config.contract.createTransaction('AddToACL')
     const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
     console.log('*** Result:');
     console.log(resultACLTx)
 
     res.status(200).send({"status":"Transaction Confirmed", "result":"Data will now be shared with bidder"})
+}
+
+exports.getSharedDeviceLatestData = async (req, res) => {
+
+    const assetDetails = {
+        'deviceId': req.body.deviceId,
+        'ownerOrg': req.body.ownerId
+    }
+
+    if (!(assetDetails.deviceId !== undefined && assetDetails.ownerOrg !== undefined)) {
+        return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, ownerId"})
+    }
+
+    console.log('\n--> Submit Transaction: GetDeviceSharedLatestData');
+    const txResult = await config.contract.evaluateTransaction('GetDeviceSharedLatestData', assetDetails.ownerOrg, assetDetails.deviceId);
+    console.log(txResult.toString())
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    res.status(200).send({"status":"Data Fetched", "data": JSON.parse(prettyJSONString(txResult.toString()))})
+}
+
+exports.getSharedDeviceAllData = async (req, res) => {
+
+    const assetDetails = {
+        'deviceId': req.body.deviceId,
+        'ownerOrg': req.body.ownerId
+    }
+
+    if (!(assetDetails.deviceId !== undefined && assetDetails.ownerOrg !== undefined)) {
+        return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, ownerId"})
+    }
+
+
+    console.log('\n--> Submit Transaction: GetDeviceSharedAllData');
+    const txResult = await config.contract.evaluateTransaction('GetDeviceSharedAllData', assetDetails.ownerOrg, assetDetails.deviceId);
+    console.log(txResult.toString())
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    res.status(200).send({"status":"Data Fetched", "data": JSON.parse(prettyJSONString(txResult.toString()))})
+}
+
+const getSharedDevicesListByOwnerHelperFunc = async (ownerId) => {
+    if (!(ownerId !== undefined)) {
+        return console.log({"status":"invalid input", "required_fields":"deviceId, ownerId"})
+    }
+
+    console.log(`\n--> Submit Transaction: QuerySharedDevices ${ownerId}`);
+    const txResult = await config.contract.evaluateTransaction('QuerySharedDevices', ownerId);
+    console.log(txResult.toString())
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    return JSON.parse(prettyJSONString(txResult.toString()))
+}
+
+exports.getSharedDevicesList = async (req, res) => {
+
+    const ownersList = ["Org1MSP", "Org2MSP"]
+
+    const devicesList = []
+    for (let owner of ownersList) {
+        if (owner === config.msp) continue
+        const orgDevices = await getSharedDevicesListByOwnerHelperFunc(owner)
+        console.log("org devic es", orgDevices)
+        for (let d of orgDevices){
+            devicesList.push(d)
+        }
+    }
+
+    return res.status(200).send({"status":"Query Successful", "data":devicesList})
+
+}
+
+exports.getOwnedDevices = async (req, res) => {
+
+    console.log(`\n--> Submit Transaction: QueryDevices`);
+
+    const txResult = await config.contract.evaluateTransaction('QueryDevices', `{"selector":{"owner":"${config.msp}", "_id":{"$regex":"DEVICE*"}}}`);
+    console.log(txResult.toString())
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    const devicesList = JSON.parse(txResult.toString())
+    return res.status(200).send({"status":"Query Successful", "data":devicesList})
+
 }
 
 /*
