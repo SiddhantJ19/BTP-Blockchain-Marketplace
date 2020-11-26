@@ -2,9 +2,9 @@ package chaincode
 
 import (
 	"encoding/json"
-    "github.com/hyperledger/fabric-chaincode-go/shim"
+    //"github.com/hyperledger/fabric-chaincode-go/shim"
 
-    //"fmt"
+    "fmt"
 	"time"
 	"errors"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
@@ -12,7 +12,7 @@ import (
 
 func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterface) error {
 	//marketplaceCollection, _ := getMarketplaceCollection()
-	privateDetailsCollection, _ := getPrivateDetailsCollectionName()
+	privateDetailsCollection, _ := getPrivateDetailsCollectionName(ctx)
 
 	// 1. get transient map
 	transientMap, err := ctx.GetStub().GetTransient()
@@ -62,7 +62,9 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 	if err != nil {
 	}
 	*/
+
 	devicedataKey := generateKeyForDevicedata(deviceInput.ID)
+	fmt.Println("Insert data : Getting From private collection")
 	deviceDataAsBytes, err := ctx.GetStub().GetPrivateData(privateDetailsCollection, devicedataKey)
 	if err != nil {
 		deviceDataAsBytes = []byte("{}")
@@ -90,6 +92,8 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 	if err != nil {
 		return err;
 	}
+
+	fmt.Println("Insert Data : Putting into private collection")
 	err = ctx.GetStub().PutPrivateData(privateDetailsCollection, devicedataKey, deviceAllDataAsBytes)
 	if err != nil {
 		return err;
@@ -97,12 +101,13 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 
     // make collections
     // copy to collections after checking ACL
-    aclCollection, _ := getACLCollection()
+    aclCollection, _ := getACLCollection(ctx)
     deviceACLAsBytes, err := ctx.GetStub().GetPrivateData(aclCollection, deviceInput.ID)
     var deviceACL DeviceACL
     err = json.Unmarshal(deviceACLAsBytes, &deviceACL)
 
-    ownerMSP, err := shim.GetMSPID();
+	fmt.Println("Insert data: Putting into ACL Collection")
+    ownerMSP, err := ctx.GetClientIdentity().GetMSPID()
     for _, aclObject := range deviceACL.List {
         sharingCollection, _ := getSharingCollection(ownerMSP, aclObject.BuyerId)
         err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, newDataEntryAsBytes)
@@ -111,7 +116,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 }
 
 func (s *SmartContract) GetDeviceAllData(ctx contractapi.TransactionContextInterface, deviceId string) ([]DeviceDataObject, error) {
-	privateDetailsCollection, _ := getPrivateDetailsCollectionName()
+	privateDetailsCollection, _ := getPrivateDetailsCollectionName(ctx)
 	deviceDataKey := generateKeyForDevicedata(deviceId)
 
 	deviceDataAsBytes, err := ctx.GetStub().GetPrivateData(privateDetailsCollection, deviceDataKey)
@@ -133,7 +138,7 @@ func (s *SmartContract) GetDeviceAllData(ctx contractapi.TransactionContextInter
 }
 
 func (s *SmartContract) GetDeviceLatestData(ctx contractapi.TransactionContextInterface, deviceId string) (DeviceDataObject, error) {
-	privateDetailsCollection, _ := getPrivateDetailsCollectionName()
+	privateDetailsCollection, _ := getPrivateDetailsCollectionName(ctx)
 	deviceDataKey := generateKeyForDevicedata(deviceId)
 
 	deviceDataAsBytes, err := ctx.GetStub().GetPrivateData(privateDetailsCollection, deviceDataKey)
@@ -160,7 +165,7 @@ type ArbitaryData struct{
 
 func (s *SmartContract) QueryPrivateData(ctx contractapi.TransactionContextInterface, queryString string) ([]*ArbitaryData,error) {
 
-	privateDetailsCollection, _ := getPrivateDetailsCollectionName()
+	privateDetailsCollection, _ := getPrivateDetailsCollectionName(ctx)
 
 
 

@@ -67,6 +67,7 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     // 5.1 save to collection
     // Marketplace => key : deviceID
 
+    fmt.Println("Create Device : Putting into market collection")
     err = ctx.GetStub().PutPrivateData(marketplaceCollection, deviceKey, deviceAsBytes)
     if err != nil {}
 
@@ -84,11 +85,16 @@ func (s *SmartContract) CreateDevice(ctx contractapi.TransactionContextInterface
     if err != nil {}
 
     // 6.1 save to db
-    privateDetailsCollection, err := getPrivateDetailsCollectionName()
-    if err != nil {}
+    privateDetailsCollection, err := getPrivateDetailsCollectionName(ctx)
+    if err != nil {
+        return err
+    }
 
+    fmt.Println("Create Device : Putting into private collection")
     err = ctx.GetStub().PutPrivateData(privateDetailsCollection, deviceInput.ID, deviceAsBytes)
-    if err != nil {}
+    if err != nil {
+        return err
+    }
 
     return nil
 }
@@ -128,6 +134,7 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
     marketplaceCollection, err := getMarketplaceCollection()
     if err != nil {}
 
+    fmt.Println("Update Device : getting from private collection")
     key := generateKeyForDevice(deviceInput.ID)
     deviceAsBytes, err = ctx.GetStub().GetPrivateData(marketplaceCollection, key)
     if err != nil {
@@ -137,7 +144,9 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
     // unmarshall to DevicePublicDetails
     var deviceMarketplace DevicePublicDetails
     err = json.Unmarshal(deviceAsBytes,&deviceMarketplace)
-    if err != nil {}
+    if err != nil {
+        return fmt.Errorf("device %v does not exist from unmarshal\n %v" , key, err.Error())
+    }
 
     // change the description if device's owner == clientOrgId -> done by the state based ep
     deviceMarketplace.Description = deviceInput.Description
@@ -147,14 +156,15 @@ func (s *SmartContract) UpdateDeviceDetails(ctx contractapi.TransactionContextIn
     deviceAsBytes, err = json.Marshal(deviceMarketplace)
     if err != nil {}
 
+
     // put in the db
+    fmt.Println("Update Device : Putting into private collection")
     err = ctx.GetStub().PutPrivateData(marketplaceCollection, key, deviceAsBytes)
 
     return nil
 }
 
-
-func (s *SmartContract) GetDeviceDetails(ctx contractapi.TransactionContextInterface, deviceId string) (DevicePublicDetails, error) {
+func (s *SmartContract) DeleteDevice(ctx contractapi.TransactionContextInterface, deviceId string) (DevicePublicDetails, error) {
     marketplaceCollection, err := getMarketplaceCollection()
     if err != nil {}
     var deviceMarketplace DevicePublicDetails
@@ -165,11 +175,34 @@ func (s *SmartContract) GetDeviceDetails(ctx contractapi.TransactionContextInter
         return deviceMarketplace, fmt.Errorf("device %v does not exist \n %v" , key, err.Error())
     }
 
-
     err = json.Unmarshal(deviceAsBytes,&deviceMarketplace)
     if err != nil {}
 
+    err = ctx.GetStub().DelPrivateData(marketplaceCollection, key)
+    if err!= nil {
+        return deviceMarketplace, err
+    }
     return deviceMarketplace, nil
+}
+
+func (s *SmartContract) GetDeviceDetails(ctx contractapi.TransactionContextInterface, deviceId string) (*DevicePublicDetails, error) {
+    marketplaceCollection, err := getMarketplaceCollection()
+    if err != nil {}
+    var deviceMarketplace DevicePublicDetails
+
+    key := generateKeyForDevice(deviceId)
+    deviceAsBytes, derr := ctx.GetStub().GetPrivateData(marketplaceCollection, key)
+    if derr != nil {
+        return nil, fmt.Errorf("device %v does not exist \n %v" , key, err.Error())
+    }
+
+
+    err = json.Unmarshal(deviceAsBytes,&deviceMarketplace)
+    if err != nil {
+        return nil, fmt.Errorf("device %v does not exist \n %v" , key, err.Error())
+    }
+
+    return &deviceMarketplace, nil
 
 
 }

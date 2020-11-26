@@ -3,7 +3,6 @@ package chaincode
 import (
     "encoding/json"
     "fmt"
-    "github.com/hyperledger/fabric-chaincode-go/shim"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
     "errors"
 )
@@ -26,7 +25,7 @@ func (s *SmartContract) AgreeToSell(ctx contractapi.TransactionContextInterface,
     if err != nil {return fmt.Errorf(err.Error())}
 
     ownerOrgId := device.Owner
-    peerOrgId, err := shim.GetMSPID()
+    peerOrgId, err := ctx.GetClientIdentity().GetMSPID()
     if err != nil {return fmt.Errorf(err.Error())}
 
     if ownerOrgId != peerOrgId {
@@ -69,7 +68,7 @@ func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextI
 
 
     // ----------------- TradeAgreement ---------------
-    tradeAgreementCollection, err := getTradeAgreementCollection()
+    tradeAgreementCollection, err := getTradeAgreementCollection(ctx)
     if err != nil {}
 
     // check if tradeAgreement is present in ORG's TradeAgreements collection
@@ -83,8 +82,15 @@ func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextI
     // marshal the trade input
     tradeAgreementAsBytes, err = json.Marshal(tradeAgreement)
 
+    if err!=nil {
+        return err
+    }
     // save trade agreement
     err = ctx.GetStub().PutPrivateData(tradeAgreementCollection, tradeAgreementInput.ID, tradeAgreementAsBytes)
+    if err!=nil {
+        return err
+    }
+
     return nil
 }
 
@@ -122,7 +128,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     if err != nil {}
 
     // DealsCollection -> where all the deals are stored
-    tradeAgreementCollection, err := getTradeAgreementCollection() // required to generate private-data hash for the bidder's agreement collection:tradeID
+    tradeAgreementCollection, err := getTradeAgreementCollection(ctx) // required to generate private-data hash for the bidder's agreement collection:tradeID
 
     // create Interest token
     interestToken := InterestToken{
@@ -149,7 +155,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
 
 
 func (s *SmartContract) GetTradeAgreement(ctx contractapi.TransactionContextInterface, tradeId string) (TradeAgreement, error) {
-    tradeAgreementCollection, err := getTradeAgreementCollection()
+    tradeAgreementCollection, err := getTradeAgreementCollection(ctx)
     if err != nil {}
 
     var tradeAgreementObject TradeAgreement;

@@ -93,7 +93,7 @@ func (s *SmartContract) AddDeviceDataP1(ctx contractapi.TransactionContextInterf
 
 func (s *SmartContract) AddDeviceDataP2(ctx contractapi.TransactionContextInterface) error {
 	//marketplaceCollection, _ := getMarketplaceCollection()
-	privateDetailsCollection, _ := getPrivateDetailsCollectionName()
+	privateDetailsCollection, _ := getPrivateDetailsCollectionName(ctx)
 
 	// 1. get transient map
 	transientMap, err := ctx.GetStub().GetTransient()

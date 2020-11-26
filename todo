@@ -189,5 +189,18 @@ DataSharing
 
 
 
+flow:
+    - devices create
+    - update devices
+    - data, past data
+    - share: org1 - org2
+        - org1 - agree to sell
+        - org2 - agree to buy
+        - org2 - create interest token
+        - org1 read interest token
+            - check if agreement are same
+            - device specific acl update
+            - share data
+
 
 

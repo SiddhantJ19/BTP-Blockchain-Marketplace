@@ -218,9 +218,11 @@ exports.confirmSell = async (req, res) => {
     const tx1Result = await config.contract.evaluateTransaction('InvokeDataDistribution', tradeDetails.tradeId);
     console.log(`*** Verify Trade Result: ${tx1Result.toString()}`);
 
-    console.log('\n--> Submit Transaction: AddToACL, ');
-    const tx2Result = await config.contract.evaluateTransaction('AddToACL', tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
-    console.log(`*** AddToACL Result: ${tx2Result.toString()}`);
+    
+    let aclTx = config.contract.createTransaction('AddToACL')
+    const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
+    console.log('*** Result:');
+    console.log(resultACLTx)
 
     res.status(200).send({"status":"Transaction Confirmed", "result":"Data will now be shared with bidder"})
 }

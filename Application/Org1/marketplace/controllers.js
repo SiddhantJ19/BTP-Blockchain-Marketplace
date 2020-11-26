@@ -50,7 +50,7 @@ exports.wishToBuy = async (req, res) => {
     agreeToBuyTx.setTransient({
         _TradeAgreement: ABTransientMapData
     });
-    const ABResult = await agreeToBuyTx.submit();
+    const ABResult = await agreeToBuyTx.submit(tradeDetails.deviceId);
     console.log('*** Agree To Buy Result:');
     console.log(ABResult)
 

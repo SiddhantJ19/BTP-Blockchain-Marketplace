@@ -9,6 +9,7 @@ let contract = {}
 let curUser = {}
 let channelName = "mychannel"
 let chaincodeName = "mychaincode"
+let msp = "Org2MSP";
 
 module.exports = {
     ccp: ccp,
@@ -19,5 +20,6 @@ module.exports = {
     contract: contract,
     curUser: curUser,
     channelName: channelName,
-    chaincodeName:chaincodeName
+    chaincodeName:chaincodeName,
+    msp:msp
 }

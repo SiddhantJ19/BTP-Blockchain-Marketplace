@@ -7,16 +7,16 @@ const config = require('../config/base')
 
 const channelName = config.channelName;
 const chaincodeName = config.chaincodeName;
-const mspOrg1 = 'Org1MSP';
+const msp = config.msp
 
 exports.enrollAdmin = async (req, res) => {
-    await enrollAdmin(config.caClient, config.wallet, mspOrg1);
+    await enrollAdmin(config.caClient, config.wallet, msp);
     res.status(200).send({"status":"Admin enrolled successfully"})
 }
 
 exports.registerUser = async (req, res) => {
     const userName = req.body.userName
-    await registerAndEnrollUser(config.caClient, config.wallet, mspOrg1, userName, 'org1.department1');
+    await registerAndEnrollUser(config.caClient, config.wallet, msp, userName, 'org1.department1');
     config.curUser = userName
     res.status(200).send({"status":"User enrolled successfully", "userName": userName})
 }
@@ -32,6 +32,7 @@ exports.connectGateway = async (req, res) => {
     });
     config.network = await config.gateway.getNetwork(channelName);
     config.contract = config.network.getContract(chaincodeName);
+    config.contract.addDiscoveryInterest({name: 'mychaincode', collectionNames: ['Org1MSP_aclCollection']});
     res.status(200).send({"status":"Gateway Connected", "userName": userName})
 
 }

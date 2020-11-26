@@ -27,7 +27,7 @@ func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContex
     if err != nil {}
 
     // getOwner's trade agreement collection
-    ownerTradeAgreementCollection,err := getTradeAgreementCollection()
+    ownerTradeAgreementCollection,err := getTradeAgreementCollection(ctx)
     if err != nil {}
 
     // verify trade conditions
@@ -43,18 +43,20 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
         TradeID: tradeId,
         BuyerId: bidderId,
     }
-    aclCollection, err := getACLCollection()
+    aclCollection, err := getACLCollection(ctx)
     fmt.Println(aclCollection)
     fmt.Printf("%s %s %s \n\n", bidderId, tradeId, deviceId)
     aclAsBytes, err := ctx.GetStub().GetPrivateData(aclCollection, deviceId)
-    if err != nil {}
+    if err != nil {
+        fmt.Println(err)
+    }
 
     var acl DeviceACL
     err = json.Unmarshal(aclAsBytes, &acl)
-    fmt.Printf("ACL %v", acl)
+    fmt.Printf("ACL %v \n", acl)
 
     acl.List = append(acl.List, newACLObject)
-    fmt.Printf("ACL %v", acl)
+    fmt.Printf("ACL %v \n", acl)
 
     aclAsBytes, err = json.Marshal(acl)
     if err != nil {
@@ -63,6 +65,7 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
 
     err = ctx.GetStub().PutPrivateData(aclCollection, deviceId, aclAsBytes)
     if err != nil {
+        fmt.Println("Error while putting private data")
         fmt.Println(err.Error())
        return fmt.Errorf("Error Putting in ACL %v", err.Error())
     }
