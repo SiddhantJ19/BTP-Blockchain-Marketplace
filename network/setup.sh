@@ -94,9 +94,9 @@ function commitChainCode {
 
 # Function Calls below
 
-networkDown
-extraSetup
-networkUp
+# networkDown
+# extraSetup
+# networkUp
 packageChainCode
 installChaincodeOnBothOrgs
 approveChaincodeOnBothOrgs

@@ -1,3 +1,4 @@
+// eslint-disable-next-line strict
 const { Gateway, Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const path = require('path');

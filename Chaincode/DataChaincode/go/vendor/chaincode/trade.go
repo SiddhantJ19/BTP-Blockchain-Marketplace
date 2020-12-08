@@ -86,6 +86,7 @@ func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextI
         return err
     }
     // save trade agreement
+
     err = ctx.GetStub().PutPrivateData(tradeAgreementCollection, tradeAgreementInput.ID, tradeAgreementAsBytes)
     if err!=nil {
         return err

@@ -38,6 +38,15 @@ type InterestToken struct { // token of interest passed by the bidder
     TradeAgreementCollection string `json:"dealsCollection"` // required to generate private-data hash for the bidder's agreement collection:tradeID
 }
 
+type Receipt struct {
+    TimeStamp   time.Time `json:"time_stamp"`
+    Seller      string     `json:"seller"`
+    Buyer       string     `json:"buyer"`
+    TransactionId   string  `json:"transaction_id"`
+    TradeId         string  `json:"trade_id"`
+}
+
+
 type DeviceDataObject struct {
 	Timestamp time.Time `json:"timestamp"`
 	Data      string    `json:"dataJSON"` // JSON Data -> string

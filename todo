@@ -202,5 +202,16 @@ flow:
             - device specific acl update
             - share data
 
+Tasks
+1. Transactions logging
+    - any transaction occurs should be logged at user's end
+    - Transaction level listner
+
+2. Chain of Custody of (very important)
+    - InvokeDataDistributtion transmits event Reciept, --> to be captured in the application and then emailed to other organization
+
+3. Trade reciept
+    - After Trade Agreements are verified, transaction event is released to clients of both orgs, this is not stored on Blockchain, 
+    - Reciept - (timestamp, seller, buyer, agreement hash)
 
 

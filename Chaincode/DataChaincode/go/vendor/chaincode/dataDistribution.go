@@ -4,7 +4,9 @@ import (
     "bytes"
     "encoding/json"
     "fmt"
+    "github.com/hyperledger/fabric-chaincode-go/shim"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
+    "time"
 )
 
 func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContextInterface, tradeId string) error {
@@ -19,7 +21,7 @@ func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContex
     }
 
     deviceId := bidderIntrestToken[0].DeviceId
-    //bidderId := bidderIntrestToken[0].BidderID
+    bidderId := bidderIntrestToken[0].BidderID
     bidderTradeAgreementCollection := bidderIntrestToken[0].TradeAgreementCollection
     fmt.Println(bidderIntrestToken[0])
     // check client org is the owner
@@ -32,6 +34,22 @@ func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContex
 
     // verify trade conditions
     err = verifyTradeConditions(ctx, bidderTradeAgreementCollection, ownerTradeAgreementCollection, tradeId)
+    if err != nil {
+        return fmt.Errorf(err.Error())
+    }
+
+    transactionId := ctx.GetStub().GetTxID()
+    sellerId, err := shim.GetMSPID()
+    tradeEventPayload := Receipt{
+        Buyer: bidderId,
+        Seller: sellerId,
+        TransactionId: transactionId,
+        TimeStamp: time.Now(),
+        TradeId: tradeId,
+    }
+    tradeEventPayloadAsBytes, err := json.Marshal(tradeEventPayload)
+
+    err = ctx.GetStub().SetEvent("Receipt", tradeEventPayloadAsBytes)
     if err != nil {
         return err
     }
