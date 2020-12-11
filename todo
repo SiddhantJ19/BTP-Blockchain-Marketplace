@@ -215,3 +215,20 @@ Tasks
     - Reciept - (timestamp, seller, buyer, agreement hash)
 
 
+
+
+
+trying submitTransaction and try to get transactionId
+
+Reciept{
+    transactionId -> Id of tx put on marketplace as txiD = {TYPE: TRADE_CONFIRMATION, SELLER_AGREEMENT_HASH: ---, BUYER-AGREEMENT-HASH = ---}
+}
+
+1. Receipt
+
+    1. Agree to sell
+    2. Get Interest token
+    3. Confirm sell 
+        1. queryInterestToken -> returns InterestToken (evaluate Tx)
+        2. InvokeDataDistributtion -> param InterestToken ->  verifyAgreements, AddToACL, create Receipt ,emit event
+                                                                                Tx          Tx

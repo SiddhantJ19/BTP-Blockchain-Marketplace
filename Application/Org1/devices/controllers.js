@@ -1,7 +1,8 @@
 const { Gateway, Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
-const config = require('../config/base')
+const config = require('../config/base');
+const { network, contract } = require('../config/base');
 
 
 function prettyJSONString(inputString) {
@@ -200,7 +201,23 @@ exports.agreeToSell = async (req, res) => {
 
     res.status(200).send({"status":"Trade Agreement Created", "data": JSON.parse(prettyJSONString(txResult.toString()))})
 
+}
 
+exports.testEvent = async (req, res) => {
+
+    
+    const txResult = await config.contract.submitTransaction('Test', 'XYZ')
+    console.log("test")
+    console.log(txResult.toString())
+    const listener = async (event) => {
+        console.log("event")
+        if (event.eventName === 'EVENT') {
+            console.log("> INCOMING EVENT: " + event.payload.toString())
+        }
+    }
+    await config.contract.addContractListener(listener)
+    
+    res.status(200).send({"data": "TEST"});
 }
 
 exports.confirmSell = async (req, res) => {
@@ -214,17 +231,35 @@ exports.confirmSell = async (req, res) => {
         return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, tradeId, bidderId"})
     }
 
-    console.log('\n--> Submit Transaction: InvokeDataDistribution, ');
-    const tx1Result = await config.contract.evaluateTransaction('InvokeDataDistribution', tradeDetails.tradeId);
-    console.log(`*** Verify Trade Result: ${tx1Result.toString()}`);
+    let receipt
+    const listener = async (event) => {
+        if (event.eventName === 'RECEIPT-EVENT') {
+            console.log("> INCOMING EVENT: " + event.payload.toString())
+            receipt = event.payload.toString()
+        }
+    }
+    await config.contract.addContractListener(listener)
+
+    console.log('\n --> Queried Interest Token, \n')
+    const interestToken = await config.contract.evaluateTransaction('QueryInterestTokenFromTradeId', tradeDetails.tradeId)
+    console.log(`**** : ${interestToken}`)
+    console.log(`**** : ${interestToken.toString()}`)
 
 
-    let aclTx = config.contract.createTransaction('AddToACL')
-    const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
-    console.log('*** Result:');
-    console.log(resultACLTx)
+    // console.log('\n--> Submit Transaction: InvokeDataDistribution, ');
+    // const tx1Result = await config.contract.evaluateTransaction('InvokeDataDistribution', tradeDetails.tradeId);
+    // console.log(`*** Verify Trade Result: ${tx1Result.toString()}`);
+    // console.log(`*** Verify Trade Result: ${tx1Result}`);
+    
+    // let aclTx = config.contract.createTransaction('AddToACL')
+    // const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
+    // console.log('*** Result:');
+    // console.log(resultACLTx)
 
-    res.status(200).send({"status":"Transaction Confirmed", "result":"Data will now be shared with bidder"})
+    // let receiptTx = config.contract.createTransaction('CreateTradeConfirmationReceipt')
+    // const resultReceiptTx = await receiptTx.submit(tx1Result) 
+
+    res.status(200).send({"status":"Transaction Confirmed", "result":"Data will now be shared with bidder", "receipt": receipt})
 }
 
 exports.getSharedDeviceLatestData = async (req, res) => {

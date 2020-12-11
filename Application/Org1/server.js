@@ -1,14 +1,15 @@
+/* eslint-disable strict */
 const { Gateway, Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const { buildCAClient, registerAndEnrollUser, enrollAdmin } = require('./base/CAUtil');
 const { buildCCPOrg1, buildWallet } = require('./base/AppUtil');
 
-const express = require('express')
-const dotenv = require('dotenv')
-const config = require('./config/base')
+const express = require('express');
+const dotenv = require('dotenv');
+const config = require('./config/base');
 
-const app = express()
+const app = express();
 // const uiroutes = require('./ui/routes')
 const userRoutes = require('./users/routes');
 const deviceRoutes = require('./devices/routes');
@@ -25,13 +26,12 @@ config.ccp = buildCCPOrg1();
 config.caClient = buildCAClient(FabricCAServices, config.ccp, 'ca.org1.example.com');
 
 buildWallet(Wallets, walletPath).then( wallet => {
-    config.wallet = wallet
-    console.log("Wallet Ready")
+    config.wallet = wallet;
+    console.log('Wallet Ready');
 });
 
 
-app.use(express.json())
-
+app.use(express.json());
 
 
 

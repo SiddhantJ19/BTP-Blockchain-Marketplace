@@ -1,21 +1,28 @@
 
-app_cmd_dir="/run/media/coderdude/Adwait/Projects/btp_fabric/tutorials/fabric-samples/test-network/btp_cmds/app_cmds/"
-
-# echo "Enrolling org1"
+# app_cmd_dir="/run/media/coderdude/Adwait/Projects/btp_fabric/tutorials/fabric-samples/test-network/btp_cmds/app_cmds/"
+app_cmd_dir="/home/siddhant/HLFabric/fabric-samples/Blockchain-marketplace/Application/app_script_cmds/app_cmds"
+echo "Enrolling org1"
 source $app_cmd_dir/org1_enroll_and_connect.sh
 
-# echo "Enrolling org2"
-source $app_cmd_dir/org2_enroll_and_connect.sh
 
-# echo "Creating org1 devices"
+# testEvent
+source $app_cmd_dir/testEvent.sh
+
+# echo "Enrolling org2"
+# source $app_cmd_dir/org2_enroll_and_connect.sh
+
+# # echo "Connection gateway from org1"
+# # source $app_cmd_dir/org1_connect.sh
+
+# # echo "Creating org1 devices"
 # source $app_cmd_dir/org1_create_devices.sh
 
-# echo "Creating org2 devices"
-# source $app_cmd_dir/org2_create_devices.sh
+# # echo "Creating org2 devices"
+# # source $app_cmd_dir/org2_create_devices.sh
 
 # # share from org1 - org2
-# source $app_cmd_dir/org1_add_data.sh
-# source $app_cmd_dir/org1_add_data.sh
+# # source $app_cmd_dir/org1_add_data.sh
+# # source $app_cmd_dir/org1_add_data.sh
 
 # source $app_cmd_dir/sharing_org1_to_2.sh
 

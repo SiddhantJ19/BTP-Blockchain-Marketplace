@@ -9,7 +9,14 @@ import (
     "time"
 )
 
-func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContextInterface, tradeId string) error {
+/*
+1. QueryInterestTokenFromTradeId(tradeId, string)
+2.
+*/
+
+
+
+func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContextInterface, tradeId string) ([]byte, []byte, string, error) {
     // verify client's org == peer's org
     err := verifyClientOrgMatchesPeerOrg(ctx)
     if err != nil {}
@@ -17,11 +24,11 @@ func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContex
     // get Device Id from interest token
     bidderIntrestToken, err := s.QueryInterestTokenFromTradeId(ctx, tradeId)
     if err != nil {
-        return fmt.Errorf("Cannot get BidderInterestToken, %v", err.Error())
+        return nil, nil, "ERROR" ,fmt.Errorf("Cannot get BidderInterestToken, %v", err.Error())
     }
 
-    deviceId := bidderIntrestToken[0].DeviceId
     bidderId := bidderIntrestToken[0].BidderID
+    deviceId := bidderIntrestToken[0].DeviceId
     bidderTradeAgreementCollection := bidderIntrestToken[0].TradeAgreementCollection
     fmt.Println(bidderIntrestToken[0])
     // check client org is the owner
@@ -32,28 +39,14 @@ func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContex
     ownerTradeAgreementCollection,err := getTradeAgreementCollection(ctx)
     if err != nil {}
 
+    sellerAgreementHash, err := getAgreementHash(ctx, ownerTradeAgreementCollection, tradeId)
+    buyerAgreementHash, err := getAgreementHash(ctx, bidderTradeAgreementCollection, tradeId)
     // verify trade conditions
-    err = verifyTradeConditions(ctx, bidderTradeAgreementCollection, ownerTradeAgreementCollection, tradeId)
-    if err != nil {
-        return fmt.Errorf(err.Error())
+    if !bytes.Equal(sellerAgreementHash, buyerAgreementHash) {
+        return nil, nil, "ERROR" , fmt.Errorf("Agreements do not match")
     }
 
-    transactionId := ctx.GetStub().GetTxID()
-    sellerId, err := shim.GetMSPID()
-    tradeEventPayload := Receipt{
-        Buyer: bidderId,
-        Seller: sellerId,
-        TransactionId: transactionId,
-        TimeStamp: time.Now(),
-        TradeId: tradeId,
-    }
-    tradeEventPayloadAsBytes, err := json.Marshal(tradeEventPayload)
-
-    err = ctx.GetStub().SetEvent("Receipt", tradeEventPayloadAsBytes)
-    if err != nil {
-        return err
-    }
-    return nil
+    return sellerAgreementHash, buyerAgreementHash, bidderId, nil
 }
 
 func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bidderId string, tradeId string, deviceId string) error {
@@ -61,6 +54,8 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
         TradeID: tradeId,
         BuyerId: bidderId,
     }
+
+
     aclCollection, err := getACLCollection(ctx)
     fmt.Println(aclCollection)
     fmt.Printf("%s %s %s \n\n", bidderId, tradeId, deviceId)
@@ -91,19 +86,53 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
     return nil
 }
 
+func (s *SmartContract) CreateTradeConfirmationReceipt(ctx contractapi.TransactionContextInterface,
+    sellerAgreementHash []byte, buyerAgreementHash []byte, tradeId string, buyerId string) error {
 
-// ----------------------------- Data Sharing Utils --------------------------------------------
-func verifyTradeConditions(ctx contractapi.TransactionContextInterface, bidderCollection string, sellerCollection string, key string) error {
-    bidderAgreementHash, err := ctx.GetStub().GetPrivateDataHash(bidderCollection, key)
-    if err != nil {}
-
-    sellerAgreementHash, err := ctx.GetStub().GetPrivateDataHash(sellerCollection, key)
-    if err != nil {}
-
-    if !bytes.Equal(bidderAgreementHash, sellerAgreementHash){
-        return fmt.Errorf("Agreements do not match")
+    tradeConfirmation := TradeConfirmation{
+        Type: "TRADE_CONFIRMATION",
+        SellerAgreementHash: string(sellerAgreementHash),
+        BuyerAgreementHash: string(buyerAgreementHash),
     }
-    return nil
+    tradeConfirmationAsBytes, err := json.Marshal(tradeConfirmation)
+    if err != nil {return err}
+    err = ctx.GetStub().PutState(tradeId, tradeConfirmationAsBytes)
+    // check transactionid in database
+    transactionId := ctx.GetStub().GetTxID()
+    sellerId, err := shim.GetMSPID()
+    tradeEventPayload := Receipt{
+        Type: "Trade Receipt",
+        Buyer: buyerId,
+        Seller: sellerId,
+        TransactionId: transactionId,
+        TimeStamp: time.Now(),
+        TradeId: tradeId,
+    }
+    tradeEventPayloadAsBytes, err := json.Marshal(tradeEventPayload)
+
+    return ctx.GetStub().SetEvent("RECEIPT-EVENT", tradeEventPayloadAsBytes)
+    // RETURN string, string, buyer's agreement hash, sellers agreement hash
+}
+// ----------------------------- Data Sharing Utils --------------------------------------------
+//func verifyTradeConditions(ctx contractapi.TransactionContextInterface, bidderCollection string, sellerCollection string, key string) error {
+//    bidderAgreementHash, err := ctx.GetStub().GetPrivateDataHash(bidderCollection, key)
+//    if err != nil {}
+//
+//    sellerAgreementHash, err := ctx.GetStub().GetPrivateDataHash(sellerCollection, key)
+//    if err != nil {}
+//
+//    if !bytes.Equal(bidderAgreementHash, sellerAgreementHash){
+//        return fmt.Errorf("Agreements do not match")
+//    }
+//    return nil
+//}
+
+func getAgreementHash(ctx contractapi.TransactionContextInterface, collection string, tradeId string) ([]byte, error) {
+    agreementHashAsBytes, err := ctx.GetStub().GetPrivateDataHash(collection, tradeId)
+    if err != nil {
+        return nil, err
+    }
+    return agreementHashAsBytes, nil
 }
 
 func verifyClientOrgMatchesOwner(ctx contractapi.TransactionContextInterface, deviceId string) error {

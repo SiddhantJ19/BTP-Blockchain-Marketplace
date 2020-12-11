@@ -154,7 +154,6 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     return nil
 }
 
-
 func (s *SmartContract) GetTradeAgreement(ctx contractapi.TransactionContextInterface, tradeId string) (TradeAgreement, error) {
     tradeAgreementCollection, err := getTradeAgreementCollection(ctx)
     if err != nil {}

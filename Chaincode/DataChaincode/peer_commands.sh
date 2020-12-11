@@ -16,7 +16,7 @@ cd ~/HLFabric/fabric-samples/test-network
 
     # create a device
     export DEVICE=$(echo -n "{\"deviceId\":${deviceId},\"dataDescription\":\"random data\", \"description\":\"Device not on sale\", \"deviceSecret\":\"--secret--\"}" | base64 | tr -d \\n)
-    peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n marblesp -c '{"function":"CreateDevice","Args":[]}' --transient "{\"_Device\":\"$DEVICE\"}"
+    peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n mychaincode -c '{"function":"CreateDevice","Args":[]}' --transient "{\"_Device\":\"$DEVICE\"}"
 
     # updateDevieDetails
     export DEVICE=$(echo -n "{\"deviceId\":${deviceId},\"description\":\"Device is on sale\", \"on_sale\":true}" | base64 | tr -d \\n)

@@ -16,8 +16,8 @@ function extraSetup {
     cd $CHAINCODE_DIR
     GO111MODULE=on go mod vendor
     cd $TEST_NETWORK_DIR
-# docker rm -f $(docker ps -a | awk '($2 ~ /dev-peer.*.marblesp.*/) {print $1}')
-# docker rmi -f $(docker images | awk '($1 ~ /dev-peer.*.marblesp.*/) {print $3}')
+docker rm -f $(docker ps -a | awk '($2 ~ /dev-peer.*.mychaincode.*/) {print $1}')
+docker rmi -f $(docker images | awk '($1 ~ /dev-peer.*.mychaincode.*/) {print $3}')
 }
 
 
@@ -51,14 +51,14 @@ function setOrg2Vars {
 
 function packageChainCode {
     setOrg1Vars
-    peer lifecycle chaincode package marblesp.tar.gz --path $CHAINCODE_DIR --lang golang --label marblespv1
+    peer lifecycle chaincode package mychaincode.tar.gz --path $CHAINCODE_DIR --lang golang --label mychaincodev1
 }
 
 function installChaincodeOnBothOrgs {
     setOrg1Vars
-    peer lifecycle chaincode install marblesp.tar.gz
+    peer lifecycle chaincode install mychaincode.tar.gz
     setOrg2Vars
-    peer lifecycle chaincode install marblesp.tar.gz
+    peer lifecycle chaincode install mychaincode.tar.gz
 }
 
 function setInstalledPackageId {
@@ -66,7 +66,7 @@ function setInstalledPackageId {
 }
 
 function approveChainCode {
-    peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name marblesp --version 1.0 --collections-config $COLLECTION_PATH --signature-policy "OR('Org1MSP.member','Org2MSP.member')" --package-id $CC_PACKAGE_ID --sequence 1 --tls --cafile $ORDERER_CA
+    peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name mychaincode --version 1.0 --collections-config $COLLECTION_PATH --signature-policy "OR('Org1MSP.member','Org2MSP.member')" --package-id $CC_PACKAGE_ID --sequence 1 --tls --cafile $ORDERER_CA
 }
 
 function approveChaincodeOnBothOrgs {
@@ -88,15 +88,15 @@ function commitChainCode {
     export ORG1_CA=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
     export ORG2_CA=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 
-    peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name marblesp --version 1.0 --sequence 1 --collections-config $COLLECTION_PATH --signature-policy "OR('Org1MSP.member','Org2MSP.member')" --tls --cafile $ORDERER_CA --peerAddresses localhost:7051 --tlsRootCertFiles $ORG1_CA --peerAddresses localhost:9051 --tlsRootCertFiles $ORG2_CA
+    peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name mychaincode --version 1.0 --sequence 1 --collections-config $COLLECTION_PATH --signature-policy "OR('Org1MSP.member','Org2MSP.member')" --tls --cafile $ORDERER_CA --peerAddresses localhost:7051 --tlsRootCertFiles $ORG1_CA --peerAddresses localhost:9051 --tlsRootCertFiles $ORG2_CA
 }
 
 
 # Function Calls below
 
-# networkDown
-# extraSetup
-# networkUp
+networkDown
+extraSetup
+networkUp
 packageChainCode
 installChaincodeOnBothOrgs
 approveChaincodeOnBothOrgs

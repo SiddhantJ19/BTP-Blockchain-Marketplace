@@ -39,11 +39,18 @@ type InterestToken struct { // token of interest passed by the bidder
 }
 
 type Receipt struct {
-    TimeStamp   time.Time `json:"time_stamp"`
-    Seller      string     `json:"seller"`
-    Buyer       string     `json:"buyer"`
-    TransactionId   string  `json:"transaction_id"`
-    TradeId         string  `json:"trade_id"`
+	TimeStamp     time.Time `json:"time_stamp"`
+	Seller        string    `json:"seller"`
+	Buyer         string    `json:"buyer"`
+	TransactionId string    `json:"transaction_id"`
+	TradeId       string    `json:"trade_id"`
+	Type          string    `json:"type"`
+}
+
+type TradeConfirmation struct {
+    Type    string  `json:"type"`
+    SellerAgreementHash string  `json:"seller_agreement_hash"`
+    BuyerAgreementHash  string  `json:"buyer_agreement_hash"`
 }
 
 

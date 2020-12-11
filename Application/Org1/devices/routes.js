@@ -1,9 +1,11 @@
 const router = require('express').Router();
-const {registerDevice, updateDevice, agreeToSell, getDeviceDetails, deleteDevice, getDeviceAllData, getDeviceLatestData, newData, confirmSell, getSharedDeviceLatestData, getSharedDeviceAllData, getSharedDevicesList, getOwnedDevices} = require('./controllers')
+const {registerDevice, updateDevice, agreeToSell, getDeviceDetails, deleteDevice, getDeviceAllData, getDeviceLatestData, newData, confirmSell, getSharedDeviceLatestData, getSharedDeviceAllData, getSharedDevicesList, getOwnedDevices, testEvent} = require('./controllers')
 
 router.post('/register',registerDevice) // register a new device
 router.post('/update',updateDevice) // update device details
 router.post('/delete',deleteDevice) // update device details
+
+router.get('/data/test', testEvent)
 
 router.post('/data/latest',getDeviceLatestData) // update device details
 router.post('/data/all',getDeviceAllData) // update device details
