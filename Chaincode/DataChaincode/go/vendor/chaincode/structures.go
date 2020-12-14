@@ -37,7 +37,7 @@ type InterestToken struct { // token of interest passed by the bidder
 	BidderID        string `json:"bidderId"`
     TradeAgreementCollection string `json:"dealsCollection"` // required to generate private-data hash for the bidder's agreement collection:tradeID
 }
-
+// to be returned via event
 type Receipt struct {
 	TimeStamp     time.Time `json:"time_stamp"`
 	Seller        string    `json:"seller"`
@@ -47,10 +47,19 @@ type Receipt struct {
 	Type          string    `json:"type"`
 }
 
+// on the blockchain
 type TradeConfirmation struct {
     Type    string  `json:"type"`
     SellerAgreementHash string  `json:"seller_agreement_hash"`
     BuyerAgreementHash  string  `json:"buyer_agreement_hash"`
+}
+
+// temp object to be returned from verifyTradeAgreements
+type AgreementDetails struct  {
+    TradeId string
+    BuyerID string
+    SellerAgreementHash string
+    BuyerAgreementHash  string
 }
 
 

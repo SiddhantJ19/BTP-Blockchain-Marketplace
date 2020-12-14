@@ -16,38 +16,40 @@ import (
 
 
 
-func (s *SmartContract) InvokeDataDistribution(ctx contractapi.TransactionContextInterface, tradeId string) ([]byte, []byte, string, error) {
-    // verify client's org == peer's org
+func (s *SmartContract) GetAndVerifyTradeAgreements(ctx contractapi.TransactionContextInterface, tradeId string) (AgreementDetails, error) {
     err := verifyClientOrgMatchesPeerOrg(ctx)
     if err != nil {}
 
-    // get Device Id from interest token
     bidderIntrestToken, err := s.QueryInterestTokenFromTradeId(ctx, tradeId)
     if err != nil {
-        return nil, nil, "ERROR" ,fmt.Errorf("Cannot get BidderInterestToken, %v", err.Error())
+        return AgreementDetails{} ,fmt.Errorf("Cannot get BidderInterestToken, %v", err.Error())
     }
-
     bidderId := bidderIntrestToken[0].BidderID
     deviceId := bidderIntrestToken[0].DeviceId
     bidderTradeAgreementCollection := bidderIntrestToken[0].TradeAgreementCollection
     fmt.Println(bidderIntrestToken[0])
-    // check client org is the owner
+
     err = verifyClientOrgMatchesOwner(ctx, deviceId)
     if err != nil {}
 
-    // getOwner's trade agreement collection
     ownerTradeAgreementCollection,err := getTradeAgreementCollection(ctx)
     if err != nil {}
 
     sellerAgreementHash, err := getAgreementHash(ctx, ownerTradeAgreementCollection, tradeId)
     buyerAgreementHash, err := getAgreementHash(ctx, bidderTradeAgreementCollection, tradeId)
-    // verify trade conditions
     if !bytes.Equal(sellerAgreementHash, buyerAgreementHash) {
-        return nil, nil, "ERROR" , fmt.Errorf("Agreements do not match")
+        return AgreementDetails{}, fmt.Errorf("Agreements do not match")
     }
 
-    return sellerAgreementHash, buyerAgreementHash, bidderId, nil
+    agreementDetails := AgreementDetails{
+        TradeId: tradeId,
+        BuyerID: bidderId,
+        SellerAgreementHash: string(sellerAgreementHash),
+        BuyerAgreementHash: string(buyerAgreementHash),
+    }
+    return agreementDetails, nil
 }
+
 
 func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bidderId string, tradeId string, deviceId string) error {
     newACLObject := ACLObject{
@@ -86,32 +88,30 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
     return nil
 }
 
-func (s *SmartContract) CreateTradeConfirmationReceipt(ctx contractapi.TransactionContextInterface,
-    sellerAgreementHash []byte, buyerAgreementHash []byte, tradeId string, buyerId string) error {
+func (s *SmartContract) GenerateReceipt(ctx contractapi.TransactionContextInterface, ad AgreementDetails) error {
 
     tradeConfirmation := TradeConfirmation{
         Type: "TRADE_CONFIRMATION",
-        SellerAgreementHash: string(sellerAgreementHash),
-        BuyerAgreementHash: string(buyerAgreementHash),
+        SellerAgreementHash: ad.SellerAgreementHash,
+        BuyerAgreementHash: ad.BuyerAgreementHash,
     }
     tradeConfirmationAsBytes, err := json.Marshal(tradeConfirmation)
     if err != nil {return err}
-    err = ctx.GetStub().PutState(tradeId, tradeConfirmationAsBytes)
+    err = ctx.GetStub().PutState(ad.TradeId, tradeConfirmationAsBytes)
     // check transactionid in database
     transactionId := ctx.GetStub().GetTxID()
     sellerId, err := shim.GetMSPID()
     tradeEventPayload := Receipt{
         Type: "Trade Receipt",
-        Buyer: buyerId,
+        Buyer: ad.BuyerID,
         Seller: sellerId,
         TransactionId: transactionId,
         TimeStamp: time.Now(),
-        TradeId: tradeId,
+        TradeId: ad.TradeId,
     }
     tradeEventPayloadAsBytes, err := json.Marshal(tradeEventPayload)
-
+    fmt.Println("INSIDE RECEIPT CONTRACT")
     return ctx.GetStub().SetEvent("RECEIPT-EVENT", tradeEventPayloadAsBytes)
-    // RETURN string, string, buyer's agreement hash, sellers agreement hash
 }
 // ----------------------------- Data Sharing Utils --------------------------------------------
 //func verifyTradeConditions(ctx contractapi.TransactionContextInterface, bidderCollection string, sellerCollection string, key string) error {
