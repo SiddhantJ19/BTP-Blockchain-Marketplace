@@ -57,7 +57,6 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
         BuyerId: bidderId,
     }
 
-
     aclCollection, err := getACLCollection(ctx)
     fmt.Println(aclCollection)
     fmt.Printf("%s %s %s \n\n", bidderId, tradeId, deviceId)
@@ -68,10 +67,8 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
 
     var acl DeviceACL
     err = json.Unmarshal(aclAsBytes, &acl)
-    fmt.Printf("ACL %v \n", acl)
 
     acl.List = append(acl.List, newACLObject)
-    fmt.Printf("ACL %v \n", acl)
 
     aclAsBytes, err = json.Marshal(acl)
     if err != nil {
@@ -81,10 +78,8 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
     err = ctx.GetStub().PutPrivateData(aclCollection, deviceId, aclAsBytes)
     if err != nil {
         fmt.Println("Error while putting private data")
-        fmt.Println(err.Error())
        return fmt.Errorf("Error Putting in ACL %v", err.Error())
     }
-    fmt.Println("^^^^^^^^^^^^")
     return nil
 }
 
@@ -95,7 +90,14 @@ func (s *SmartContract) GenerateReceipt(ctx contractapi.TransactionContextInterf
         SellerAgreementHash: ad.SellerAgreementHash,
         BuyerAgreementHash: ad.BuyerAgreementHash,
     }
-    tradeConfirmationAsBytes, err := json.Marshal(tradeConfirmation)
+
+    tradeConfirmationAsBytes, err := ctx.GetStub().GetState(ad.TradeId)
+    if err != nil {}
+    if tradeConfirmationAsBytes != nil {
+        return fmt.Errorf("TradeId Already Exists on Blockchain", err.Error())
+    }
+
+    tradeConfirmationAsBytes, err = json.Marshal(tradeConfirmation)
     if err != nil {return err}
     err = ctx.GetStub().PutState(ad.TradeId, tradeConfirmationAsBytes)
     // check transactionid in database

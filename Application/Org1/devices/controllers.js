@@ -242,17 +242,24 @@ exports.confirmSell = async (req, res) => {
 
     console.log('\n --> VerifyingTradeAgreements, \n');
     const agreementDetails = await config.contract.evaluateTransaction('GetAndVerifyTradeAgreements', tradeDetails.tradeId);
-    console.log('\nagreementDetails : ', agreementDetails);
+    console.log('\nagreementDetails : ', agreementDetails.toString());
+
 
     if(agreementDetails){
-        await config.contract.submitTransaction('GenerateReceipt', agreementDetails);
-        console.log('\nReceipt Tx submitted');
+        try {
+
+            await config.contract.submitTransaction('GenerateReceipt', agreementDetails);
+            console.log('\nReceipt Tx submitted');
+
+            let aclTx = config.contract.createTransaction('AddToACL');
+            const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
+            console.log('*** Result:');
+            console.log(resultACLTx.toString());
+        } catch (error) {
+            console.error(error)
+        }
     }
 
-    // let aclTx = config.contract.createTransaction('AddToACL')
-    // const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
-    // console.log('*** Result:');
-    // console.log(resultACLTx)
 
     res.status(200).send({status:'Transaction Confirmed', result:'Data will now be shared with bidder', receipt: receipt});
 };

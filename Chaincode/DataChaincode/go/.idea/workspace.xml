@@ -15,13 +15,15 @@
   <component name="ChangeListManager">
     <list default="true" id="1598089e-00ee-4a32-8149-0964ca6eed45" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../../../Application/Org1/devices/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/devices/controllers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/users/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/users/controllers.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Application/Org1/wallet/admin.id" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/wallet/admin.id" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org2/wallet/admin.id" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/Org2/wallet/admin.id" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org2/wallet/admin.id" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_add_data.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_add_data.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_create_devices.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_create_devices.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/sharing_org1_to_2.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/sharing_org1_to_2.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/dataDistribution.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/dataDistribution.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/structures.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/structures.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../network/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../network/setup.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,26 +115,26 @@
     </state>
     <state x="448" y="205" width="1086" height="754" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605514789328" />
     <state x="448" y="205" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1607666560748" />
-    <state width="1795" height="284" key="GridCell.Tab.0.bottom" timestamp="1607931303327">
+    <state width="1795" height="284" key="GridCell.Tab.0.bottom" timestamp="1607943981891">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1805" height="528" key="GridCell.Tab.0.bottom/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722426" />
-    <state width="1795" height="284" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1607931303327" />
-    <state width="1795" height="284" key="GridCell.Tab.0.center" timestamp="1607931303325">
+    <state width="1795" height="284" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1607943981891" />
+    <state width="1795" height="284" key="GridCell.Tab.0.center" timestamp="1607943981888">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1805" height="528" key="GridCell.Tab.0.center/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722425" />
-    <state width="1795" height="284" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1607931303325" />
-    <state width="1795" height="284" key="GridCell.Tab.0.left" timestamp="1607931303324">
+    <state width="1795" height="284" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1607943981888" />
+    <state width="1795" height="284" key="GridCell.Tab.0.left" timestamp="1607943981887">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1805" height="528" key="GridCell.Tab.0.left/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722425" />
-    <state width="1795" height="284" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1607931303324" />
-    <state width="1795" height="284" key="GridCell.Tab.0.right" timestamp="1607931303325">
+    <state width="1795" height="284" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1607943981887" />
+    <state width="1795" height="284" key="GridCell.Tab.0.right" timestamp="1607943981890">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1805" height="528" key="GridCell.Tab.0.right/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605553722426" />
-    <state width="1795" height="284" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1607931303325" />
+    <state width="1795" height="284" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1607943981890" />
     <state x="241" y="115" width="1484" height="874" key="MergeDialog" timestamp="1606154241320">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>

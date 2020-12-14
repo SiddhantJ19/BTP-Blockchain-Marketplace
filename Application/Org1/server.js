@@ -34,12 +34,13 @@ buildWallet(Wallets, walletPath).then( wallet => {
 app.use(express.json());
 
 
-
 const port = 3000;
 
 app.use('/users', userRoutes);
+
 app.use('/devices', deviceRoutes);
 app.use('/market', marketRoutes);
+
 
 // app.use('/ui', uiroutes)
 
