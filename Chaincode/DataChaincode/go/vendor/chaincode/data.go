@@ -108,28 +108,32 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 
 	fmt.Println("Insert data: Putting into ACL Collection")
     ownerMSP, err := ctx.GetClientIdentity().GetMSPID()
+
+    var finalDeviceACL DeviceACL
     for _, aclObject := range deviceACL.List {
-        sharingCollection, _ := getSharingCollection(ownerMSP, aclObject.BuyerId)
+        if aclObject.RevokeTime.After(time.Now()) {
+            finalDeviceACL.List = append(finalDeviceACL.List, aclObject)
+            sharingCollection, _ := getSharingCollection(ownerMSP, aclObject.BuyerId)
+            sharedDeviceAllDataAsBytes, err := ctx.GetStub().GetPrivateData(sharingCollection, devicedataKey)
+            if err != nil {
+                sharedDeviceAllDataAsBytes = []byte("{}")
+            }
+            var sharedDeviceAllData DeviceData;
+            err = json.Unmarshal(sharedDeviceAllDataAsBytes,&sharedDeviceAllData)
+            if err != nil {
+            }
 
-		sharedDeviceAllDataAsBytes, err := ctx.GetStub().GetPrivateData(sharingCollection, devicedataKey)
-		if err != nil {
-			sharedDeviceAllDataAsBytes = []byte("{}")
-		}
-		var sharedDeviceAllData DeviceData;
-		err = json.Unmarshal(sharedDeviceAllDataAsBytes,&sharedDeviceAllData)
-		if err != nil {
+            sharedDeviceAllData.Data = append(sharedDeviceAllData.Data, newDataEntry )
+            sharedDeviceAllDataAsBytes, serr := json.Marshal(sharedDeviceAllData)
+            if serr != nil {
+                return err;
+            }
 
-		}
-
-
-		sharedDeviceAllData.Data = append(sharedDeviceAllData.Data, newDataEntry )
-		sharedDeviceAllDataAsBytes, serr := json.Marshal(sharedDeviceAllData)
-		if serr != nil {
-			return err;
-		}
-
-        err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, sharedDeviceAllDataAsBytes)
+            err = ctx.GetStub().PutPrivateData(sharingCollection, devicedataKey, sharedDeviceAllDataAsBytes)
+        }
     }
+    finalDeviceACLAsBytes,err := json.Marshal(finalDeviceACL)
+    err = ctx.GetStub().PutPrivateData(aclCollection, deviceInput.ID, finalDeviceACLAsBytes)
 	return nil
 }
 

@@ -175,6 +175,7 @@ exports.agreeToSell = async (req, res) => {
         'deviceId': req.body.deviceId,
         'tradeId': req.body.tradeId,
         'tradePrice': req.body.tradePrice,
+        'revoke_time': new Date(req.body.revoke_time * 1000)
     }
 
     if (!(tradeDetails.tradeId && tradeDetails.tradePrice && tradeDetails.deviceId)) {

@@ -29,6 +29,7 @@ type TradeAgreement struct { // the hash of respective trade agreements should m
 	ID       string `json:"tradeId"`    // unique key on collection_TradeAgreement
 	DeviceId string `json:"deviceId"`   // search all trades for this device
 	Price    int `json:"tradePrice"`
+	RevokeTime  time.Time   `json:"revoke_time"`
 }
 
 type InterestToken struct { // token of interest passed by the bidder
@@ -42,9 +43,10 @@ type Receipt struct {
 	TimeStamp     time.Time `json:"time_stamp"`
 	Seller        string    `json:"seller"`
 	Buyer         string    `json:"buyer"`
-	TransactionId string    `json:"transaction_id"`
+	TransactionId string    `json:"trade_confirmation_transaction_id"`
 	TradeId       string    `json:"trade_id"`
 	Type          string    `json:"type"`
+	RevokeTime    time.Time `json:"revoke_time"`
 }
 
 // on the blockchain
@@ -52,12 +54,14 @@ type TradeConfirmation struct {
     Type    string  `json:"type"`
     SellerAgreementHash string  `json:"seller_agreement_hash"`
     BuyerAgreementHash  string  `json:"buyer_agreement_hash"`
+    RevokeTime          time.Time   `json:"revoke_time"`
 }
 
 // temp object to be returned from verifyTradeAgreements
 type AgreementDetails struct  {
     TradeId string
     BuyerID string
+    RevokeTime time.Time
     SellerAgreementHash string
     BuyerAgreementHash  string
 }
@@ -77,8 +81,9 @@ type DeviceData struct {
 
 // ACL
 type ACLObject struct {
-    BuyerId string  `json:"buyerId"`
-    TradeID string `json:"tradeId"`
+    BuyerId     string          `json:"buyerId"`
+    TradeID     string          `json:"tradeId"`
+    RevokeTime time.Time    `json:"revoke_time"`
 }
 
 type DeviceACL struct {

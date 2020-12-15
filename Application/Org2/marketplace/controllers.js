@@ -36,8 +36,10 @@ exports.wishToBuy = async (req, res) => {
     const tradeDetails = {
         'tradeId': req.body.tradeId,
         'deviceId': req.body.deviceId,
-        'tradePrice': req.body.tradePrice
+        'tradePrice': req.body.tradePrice,
+        'revoke_time': new Date(req.body.revoke_time * 1000)
     }
+    console.log("tradeDetails\n", tradeDetails)
     if (!(tradeDetails.tradeId && tradeDetails.deviceId)) {
         return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, description, dataDescription, onSale"})
     }

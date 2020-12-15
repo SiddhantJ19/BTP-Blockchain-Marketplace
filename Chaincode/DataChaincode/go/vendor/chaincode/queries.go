@@ -5,6 +5,7 @@ import (
     "fmt"
     "github.com/hyperledger/fabric-chaincode-go/shim"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
+    "time"
 )
 
 const assetCollection = "assetCollection"
@@ -164,4 +165,17 @@ func constructDevicesDataQueryResponseFromIterator(resultsIterator shim.StateQue
 	}
 
 	return assets, nil
+}
+
+func (s *SmartContract) GetRevokeTime(ctx contractapi.TransactionContextInterface, tradeId string) (time.Time, error) {
+    tradeAgreementCollection, err := getTradeAgreementCollection(ctx)
+    if err != nil {}
+    tradeAgreementAsBytes, err := ctx.GetStub().GetPrivateData(tradeAgreementCollection, tradeId)
+    if err != nil {}
+    var tradeAgreement TradeAgreement
+    err = json.Unmarshal(tradeAgreementAsBytes, &tradeAgreement)
+    fmt.Println("\nTrade Agreement")
+    fmt.Println(tradeAgreement)
+    if err != nil {}
+    return tradeAgreement.RevokeTime, nil
 }

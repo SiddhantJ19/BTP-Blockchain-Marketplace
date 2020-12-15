@@ -3,7 +3,7 @@
 curl --location --request POST 'localhost:3000/devices/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "deviceId": "o1dev18",
+    "deviceId": "o1dev29",
     "description":"New Trial Device 001",
     "dataDescription":"Same random 01 data",
     "deviceSecret":"try001--secret"
@@ -14,7 +14,7 @@ sleep 3
 curl --location --request POST 'localhost:3000/devices/update' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "deviceId": "o1dev18",
+    "deviceId": "o1dev29",
     "description":"new details of device 002",
     "on_sale":false
 }'

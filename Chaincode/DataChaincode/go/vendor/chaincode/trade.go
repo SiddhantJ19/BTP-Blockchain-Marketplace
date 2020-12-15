@@ -5,6 +5,7 @@ import (
     "fmt"
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
     "errors"
+    "time"
 )
 
 // to be called by seller (only owner can sell their asset)
@@ -54,6 +55,7 @@ func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextI
     type TradeAgreementInputTransient struct {
         ID          string `json:"tradeId"`
         Price       int    `json:"tradePrice"`
+        RevokeTime  time.Time   `json:"revoke_time"`
     }
 
     var tradeAgreementInput TradeAgreementInputTransient
@@ -77,7 +79,12 @@ func (s *SmartContract) CreateTradeAgreement(ctx contractapi.TransactionContextI
     if tradeAgreementAsBytes != nil {}
 
     // create trade agreement
-    tradeAgreement := TradeAgreement{ID: tradeAgreementInput.ID, DeviceId: deviceId, Price: tradeAgreementInput.Price}
+    tradeAgreement := TradeAgreement{
+        ID: tradeAgreementInput.ID,
+        DeviceId: deviceId, Price:
+        tradeAgreementInput.Price,
+        RevokeTime: tradeAgreementInput.RevokeTime,
+    }
 
     // marshal the trade input
     tradeAgreementAsBytes, err = json.Marshal(tradeAgreement)

@@ -34,17 +34,17 @@ exports.connectGateway = async (req, res) => {
     config.contract = config.network.getContract(chaincodeName);
     config.contract.addDiscoveryInterest({name: 'mychaincode', collectionNames: ['Org1MSP_aclCollection']});
     res.status(200).send({"status":"Gateway Connected", "userName": userName})
-    blocklistner();
+    // blocklistner();
 }
 
-const blocklistner = async () => {
-    const listener = async (error, block) => {
-        if (error) {
-            console.error(error);
-            return;
-        }
-        console.log(`Block: ${block}`);
-    };
-    await config.network.addBlockListener(listener);
-};
+// const blocklistner = async () => {
+//     const listener = async (error, block) => {
+//         if (error) {
+//             console.error(error);
+//             return;
+//         }
+//         console.log(`Block: ${block}`);
+//     };
+//     await config.network.addBlockListener(listener);
+// };
 

@@ -52,10 +52,14 @@ func (s *SmartContract) GetAndVerifyTradeAgreements(ctx contractapi.TransactionC
 
 
 func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bidderId string, tradeId string, deviceId string) error {
+    revokeTime, err := s.GetRevokeTime(ctx, tradeId)
     newACLObject := ACLObject{
         TradeID: tradeId,
         BuyerId: bidderId,
+        RevokeTime: revokeTime,
     }
+    fmt.Println("newAClObject\n")
+    fmt.Println(newACLObject)
 
     aclCollection, err := getACLCollection(ctx)
     fmt.Println(aclCollection)
@@ -67,8 +71,13 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
 
     var acl DeviceACL
     err = json.Unmarshal(aclAsBytes, &acl)
+    fmt.Println("acl\n")
+    fmt.Println(acl)
 
+    acl.ID = deviceId
     acl.List = append(acl.List, newACLObject)
+    fmt.Println("acl\n")
+    fmt.Println(acl)
 
     aclAsBytes, err = json.Marshal(acl)
     if err != nil {
@@ -85,16 +94,18 @@ func (s *SmartContract) AddToACL(ctx contractapi.TransactionContextInterface, bi
 
 func (s *SmartContract) GenerateReceipt(ctx contractapi.TransactionContextInterface, ad AgreementDetails) error {
 
+    revokeTime, err := s.GetRevokeTime(ctx, ad.TradeId)
     tradeConfirmation := TradeConfirmation{
         Type: "TRADE_CONFIRMATION",
         SellerAgreementHash: ad.SellerAgreementHash,
         BuyerAgreementHash: ad.BuyerAgreementHash,
+        RevokeTime: revokeTime,
     }
 
     tradeConfirmationAsBytes, err := ctx.GetStub().GetState(ad.TradeId)
     if err != nil {}
     if tradeConfirmationAsBytes != nil {
-        return fmt.Errorf("TradeId Already Exists on Blockchain", err.Error())
+        return fmt.Errorf("TradeId Already Exists on Blockchain")
     }
 
     tradeConfirmationAsBytes, err = json.Marshal(tradeConfirmation)
@@ -110,24 +121,12 @@ func (s *SmartContract) GenerateReceipt(ctx contractapi.TransactionContextInterf
         TransactionId: transactionId,
         TimeStamp: time.Now(),
         TradeId: ad.TradeId,
+        RevokeTime: revokeTime,
     }
     tradeEventPayloadAsBytes, err := json.Marshal(tradeEventPayload)
     fmt.Println("INSIDE RECEIPT CONTRACT")
     return ctx.GetStub().SetEvent("RECEIPT-EVENT", tradeEventPayloadAsBytes)
 }
-// ----------------------------- Data Sharing Utils --------------------------------------------
-//func verifyTradeConditions(ctx contractapi.TransactionContextInterface, bidderCollection string, sellerCollection string, key string) error {
-//    bidderAgreementHash, err := ctx.GetStub().GetPrivateDataHash(bidderCollection, key)
-//    if err != nil {}
-//
-//    sellerAgreementHash, err := ctx.GetStub().GetPrivateDataHash(sellerCollection, key)
-//    if err != nil {}
-//
-//    if !bytes.Equal(bidderAgreementHash, sellerAgreementHash){
-//        return fmt.Errorf("Agreements do not match")
-//    }
-//    return nil
-//}
 
 func getAgreementHash(ctx contractapi.TransactionContextInterface, collection string, tradeId string) ([]byte, error) {
     agreementHashAsBytes, err := ctx.GetStub().GetPrivateDataHash(collection, tradeId)

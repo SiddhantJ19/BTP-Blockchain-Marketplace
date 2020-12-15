@@ -4,6 +4,7 @@ const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const config = require('../config/base');
 const { network, contract } = require('../config/base');
+const { time } = require('console');
 
 
 function prettyJSONString(inputString) {
@@ -45,7 +46,7 @@ exports.updateDevice = async (req, res) => {
         description: req.body.description,
         on_sale: req.body.on_sale
     };
-    //
+    
     if (!(assetDetails.deviceId !== undefined && assetDetails.description !== undefined && assetDetails.on_sale !== undefined)) {
         return res.status(400).send({status:'invalid input', required_fields:'deviceId, description, on_sale'});
     }
@@ -173,10 +174,12 @@ exports.deleteDevice = async (req, res) => {
 };
 
 exports.agreeToSell = async (req, res) => {
+
     const tradeDetails = {
         deviceId: req.body.deviceId,
         tradeId: req.body.tradeId,
         tradePrice: req.body.tradePrice,
+        revoke_time : new Date(req.body.revoke_time * 1000)
     };
 
     if (!(tradeDetails.tradeId && tradeDetails.tradePrice && tradeDetails.deviceId)) {
@@ -199,9 +202,8 @@ exports.agreeToSell = async (req, res) => {
     console.log('\n--> Submit Transaction: GetTradeAgreement');
     const txResult = await config.contract.evaluateTransaction('GetTradeAgreement', tradeDetails.tradeId);
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
-
     res.status(200).send({status:'Trade Agreement Created', data: JSON.parse(prettyJSONString(txResult.toString()))});
-
+    // res.status(200).send()
 };
 
 exports.testEvent = async (req, res) => {
@@ -246,8 +248,6 @@ exports.confirmSell = async (req, res) => {
 
 
     if(agreementDetails){
-        try {
-
             await config.contract.submitTransaction('GenerateReceipt', agreementDetails);
             console.log('\nReceipt Tx submitted');
 
@@ -255,9 +255,6 @@ exports.confirmSell = async (req, res) => {
             const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
             console.log('*** Result:');
             console.log(resultACLTx.toString());
-        } catch (error) {
-            console.error(error)
-        }
     }
 
 

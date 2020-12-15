@@ -232,3 +232,8 @@ Reciept{
         1. queryInterestToken -> returns InterestToken (evaluate Tx)
         2. InvokeDataDistributtion -> param InterestToken ->  verifyAgreements, AddToACL, create Receipt ,emit event
                                                                                 Tx          Tx
+
+2. Time Based revoke
+    update ACL, add timestamp field,
+
+3. Device sell
