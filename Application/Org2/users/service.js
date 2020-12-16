@@ -53,11 +53,11 @@ exports.getContractForUser = async (username, certificate) => {
 
     const network = await gateway.getNetwork(channelName);
     const contract = network.getContract(chaincodeName);
-    contract.addDiscoveryInterest({name: 'mychaincode', collectionNames: ['Org2MSP_aclCollection']});
+    contract.addDiscoveryInterest({name: 'mychaincode', collectionNames: ['Org1MSP_aclCollection']});
 
     return contract
 }
 
 exports.createNewuser = async (username) => {
-    await registerAndEnrollUser(config.caClient, config.wallet, msp, username, 'org2.department1');
+    await registerAndEnrollUser(config.caClient, config.wallet, msp, username, 'org1.department1');
 }

@@ -2,6 +2,7 @@ const path = require('path');
 
 let ccp = {};
 let caClient = {}
+let walletPath = ""
 let wallet = {}
 let gateway = {}
 let network = {}
@@ -14,6 +15,7 @@ let msp = "Org2MSP";
 module.exports = {
     ccp: ccp,
     caClient : caClient,
+    walletPath: walletPath,
     wallet : wallet,
     gateway: gateway,
     network: network,
