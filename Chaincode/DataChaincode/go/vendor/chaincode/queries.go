@@ -90,6 +90,18 @@ func (s *SmartContract) QueryInterestTokensForDevice(ctx contractapi.Transaction
    return constructInterestTokensQueryResponseFromIterator(resultsIterator)
 }
 
+func (s *SmartContract) QueryTradeAgreementsForDevice(ctx contractapi.TransactionContextInterface, deviceId string) ([]*TradeAgreement, error) {
+	tradeAgreementCollection, _ := getTradeAgreementCollection(ctx)
+
+	queryString := fmt.Sprintf(`{"selector":{"deviceId":"%s"}}`, deviceId)
+
+	resultsIterator, err := getQueryResultForQueryString(ctx, tradeAgreementCollection, queryString)
+	if err != nil {
+		return nil, err
+	}
+	return constructTradeAgreementsQueryResponseFromIterator(resultsIterator)
+}
+
 func (t *SmartContract) QueryInterestTokens(ctx contractapi.TransactionContextInterface, queryString string) ([]*InterestToken, error) {
    marketplaceCollection, _ := getMarketplaceCollection()
    resultsIterator, err := getQueryResultForQueryString(ctx, marketplaceCollection, queryString)
@@ -139,6 +151,24 @@ func constructInterestTokensQueryResponseFromIterator(resultsIterator shim.State
 			return nil, err
 		}
 		var asset InterestToken
+		err = json.Unmarshal(queryResult.Value, &asset)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, &asset)
+	}
+
+	return assets, nil
+}
+
+func constructTradeAgreementsQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]*TradeAgreement, error) {
+	var assets []*TradeAgreement
+	for resultsIterator.HasNext() {
+		queryResult, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var asset TradeAgreement
 		err = json.Unmarshal(queryResult.Value, &asset)
 		if err != nil {
 			return nil, err

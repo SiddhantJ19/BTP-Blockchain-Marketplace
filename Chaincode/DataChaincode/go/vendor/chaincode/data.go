@@ -19,6 +19,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 	if err != nil {
 	}
 
+	transactionId := ctx.GetStub().GetTxID()
 	// 2.1 get Device from transientMap
 	dataInputAsBytes := transientMap["_Data"]
 	if dataInputAsBytes == nil {
@@ -78,6 +79,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
 	newDataEntry := DeviceDataObject{
 		Timestamp: time.Now(),
 		Data: deviceInput.Data,
+		TransactionId: transactionId,
 	}
 	//newDataEntryAsBytes, err := json.Marshal(newDataEntry)
 	deviceAllData.ID = deviceInput.ID
@@ -119,6 +121,7 @@ func (s *SmartContract) AddDeviceData(ctx contractapi.TransactionContextInterfac
                 sharedDeviceAllDataAsBytes = []byte("{}")
             }
             var sharedDeviceAllData DeviceData;
+            sharedDeviceAllData.ID = deviceInput.ID
             err = json.Unmarshal(sharedDeviceAllDataAsBytes,&sharedDeviceAllData)
             if err != nil {
             }

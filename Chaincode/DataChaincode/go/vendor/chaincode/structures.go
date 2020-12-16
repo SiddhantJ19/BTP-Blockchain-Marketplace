@@ -70,6 +70,7 @@ type AgreementDetails struct  {
 type DeviceDataObject struct {
 	Timestamp time.Time `json:"timestamp"`
 	Data      string    `json:"dataJSON"` // JSON Data -> string
+	TransactionId string `json:"transactionId"`
 }
 // Data
 type DeviceData struct {
