@@ -15,19 +15,14 @@
   <component name="ChangeListManager">
     <list default="true" id="1598089e-00ee-4a32-8149-0964ca6eed45" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../../../Application/Org1/devices/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/devices/controllers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/marketplace/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/marketplace/controllers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/users/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/users/controllers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/wallet/admin.id" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org1/wallet/admin.id" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org2/devices/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org2/devices/controllers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/Org1/wallet/admin.id" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Application/Org2/marketplace/controllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org2/marketplace/controllers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Application/Org2/wallet/admin.id" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/Org2/wallet/admin.id" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Application/Org2/wallet/admin.id" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_add_data.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_add_data.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_create_devices.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/org1_create_devices.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/sharing_org1_to_2.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Application/app_script_cmds/app_cmds/sharing_org1_to_2.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/data.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/data.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/chaincode/dataDistribution.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/dataDistribution.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/queries.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/queries.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/structures.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/structures.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/chaincode/trade.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/chaincode/trade.go" afterDir="false" />
@@ -174,10 +169,10 @@
     </state>
     <state x="773" y="466" width="430" height="172" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/67.27.1853.1053/1920.0.1600.900@67.27.1853.1053" timestamp="1605331605369" />
     <state x="773" y="466" width="430" height="172" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/67.27.1853.1053@67.27.1853.1053" timestamp="1606154037911" />
-    <state x="611" y="77" width="764" height="951" key="find.popup" timestamp="1607965708206">
+    <state x="611" y="77" width="764" height="951" key="find.popup" timestamp="1608135292635">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="611" y="77" width="764" height="951" key="find.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1607965708206" />
+    <state x="611" y="77" width="764" height="951" key="find.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1608135292635" />
     <state x="656" y="257" width="840" height="678" key="search.everywhere.popup" timestamp="1607950139701">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>

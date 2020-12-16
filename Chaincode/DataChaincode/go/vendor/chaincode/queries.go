@@ -84,11 +84,32 @@ func (s *SmartContract) QueryInterestTokensForDevice(ctx contractapi.Transaction
    queryString := fmt.Sprintf(`{"selector":{"deviceId":"%s", "_id":{"$regex":"TRADE*"}}}`, deviceId)
 
    resultsIterator, err := getQueryResultForQueryString(ctx, marketplaceCollection, queryString)
-   if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        return nil, fmt.Errorf("No Interest Tokens for such device")
+    }
    return constructInterestTokensQueryResponseFromIterator(resultsIterator)
 }
+
+func (s *SmartContract) QueryACLForDevice(ctx contractapi.TransactionContextInterface, deviceId string) (DeviceACL, error) {
+    aclCollection, _ := getACLCollection(ctx)
+
+    aclAsBytes, err := ctx.GetStub().GetPrivateData(aclCollection, deviceId)
+    if err != nil {
+        fmt.Println("No ACL for the Device")
+        fmt.Println(err.Error())
+        return DeviceACL{}, fmt.Errorf("No ACL for the device", err.Error())
+    }
+    if aclAsBytes ==  nil {
+        fmt.Println("Empty ACL")
+        return DeviceACL{ID: nil, }, fmt.Errorf("Empty ACL")
+    }
+    var acl DeviceACL
+    err = json.Unmarshal(aclAsBytes, &acl)
+    if err != nil {}
+    fmt.Println(acl)
+    return acl, nil
+}
+
 
 func (t *SmartContract) QueryInterestTokens(ctx contractapi.TransactionContextInterface, queryString string) ([]*InterestToken, error) {
    marketplaceCollection, _ := getMarketplaceCollection()

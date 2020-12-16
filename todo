@@ -237,3 +237,20 @@ Reciept{
     update ACL, add timestamp field,
 
 3. Device sell
+
+Shared with -> from ACL
+{
+    Buyer 
+    RevokeTime
+}
+
+
+
+
+pending trades,
+approve -> deletes the interest token, adds to device's acl
+need to add delete interest token, only buyer and seller can delete
+
+so update structure of interest token, 
+update interest token contract and 
+delete interesttoken

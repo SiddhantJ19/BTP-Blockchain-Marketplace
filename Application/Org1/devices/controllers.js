@@ -255,11 +255,43 @@ exports.confirmSell = async (req, res) => {
             const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
             console.log('*** Result:');
             console.log(resultACLTx.toString());
-    }
+
+            // delete tradeagreement
+            const delTx = await config.contract.submitTransaction('DeleteInterestToken', tradeDetails.tradeId)
+            console.log("--> Deleted Interest Token \n")
+            console.log(delTx)
+        }
 
 
     res.status(200).send({status:'Transaction Confirmed', result:'Data will now be shared with bidder', receipt: receipt});
 };
+
+
+exports.getDeviceTradeStatus = async (req, res) => {
+    const deviceId = req.body.deviceId
+    var its = []; var acl = [];
+    try {
+        console.log("\nQuerying Interest Tokens for Device, ", deviceId)
+        its = await config.contract.evaluateTransaction("QueryInterestTokensForDevice", deviceId)
+        console.log(`\n*** Result: ${prettyJSONString(its.toString())}`);
+    }
+    catch (err) {
+        console.error("ERROR>> No pending trades")
+    }
+    try {
+
+        console.log("\nQuerying Interest Tokens for Device, ", deviceId)
+        acl = await config.contract.evaluateTransaction("QueryACLForDevice", deviceId)
+
+        console.log(`\n*** Result: ${prettyJSONString(acl.toString())}`);
+    }
+    catch (err) {
+        console.error("ERROR>> No approved trades")
+    }
+
+    res.status(200).send({status: 'Trade status fetched', "pending" : its.toString(), "shared": acl.toString()})
+}
+
 
 exports.getSharedDeviceLatestData = async (req, res) => {
 
