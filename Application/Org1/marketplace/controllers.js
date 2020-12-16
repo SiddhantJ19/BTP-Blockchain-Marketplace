@@ -37,10 +37,11 @@ exports.wishToBuy = async (req, res) => {
         'tradeId': req.body.tradeId,
         'deviceId': req.body.deviceId,
         'tradePrice': req.body.tradePrice,
+        'seller_id': req.body.seller_id,
         'revoke_time': new Date(req.body.revoke_time * 1000)
     }
-    if (!(tradeDetails.tradeId && tradeDetails.deviceId)) {
-        return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, description, dataDescription, onSale"})
+    if (!(tradeDetails.tradeId && tradeDetails.deviceId && tradeDetails.seller_id)) {
+        return res.status(400).send({"status":"invalid input", "required_fields":"deviceId, tradeId, seller_id"})
     }
 
 

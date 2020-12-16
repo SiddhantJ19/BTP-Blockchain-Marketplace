@@ -271,6 +271,7 @@ exports.confirmSell = async (req, res) => {
     };
 
     if (!(tradeDetails.tradeId && tradeDetails.bidderId && tradeDetails.deviceId)) {
+        console.log("Invalid Input", tradeDetails)
         return res.status(400).send({status: 'invalid input', required_fields: 'deviceId, tradeId, bidderId'});
     }
     let receipt = null;
