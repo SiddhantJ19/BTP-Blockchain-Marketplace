@@ -1,3 +1,5 @@
+const {getTradeAgreementsForDevice} = require("./controllers");
+const {getDeviceTradeAgreementDetails} = require("./controllers");
 const router = require('express').Router();
 const {registerDevice, updateDevice, agreeToSell, getDeviceDetails, deleteDevice, getDeviceAllData, getDeviceLatestData, newData, confirmSell, getSharedDeviceLatestData, getSharedDeviceAllData, getSharedDevicesList, getOwnedDevices, testEvent} = require('./controllers')
 
@@ -17,8 +19,11 @@ router.post('/shared/list',getSharedDevicesList) // update device details
 
 router.post('/agreetosell',agreeToSell) //
 router.post('/confirmsell',confirmSell) //
-router.post('/',getDeviceDetails) // get device details
+
+router.post('/tradeagreements/all',getTradeAgreementsForDevice) // get device details
+router.post('/tradeagreement',getDeviceTradeAgreementDetails) // get device details
 router.post('/all',getOwnedDevices) // get device details
+router.post('/',getDeviceDetails) // get device details
 
 /*
 router.post('/update',updateDeviceData) // update existing device

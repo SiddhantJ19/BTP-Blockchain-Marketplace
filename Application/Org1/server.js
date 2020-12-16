@@ -8,6 +8,7 @@ const { buildCCPOrg1, buildWallet } = require('./base/AppUtil');
 const express = require('express');
 const dotenv = require('dotenv');
 const config = require('./config/base');
+const cors = require('cors')
 
 const app = express();
 // const uiroutes = require('./ui/routes')
@@ -20,7 +21,7 @@ const chaincodeName = config.chaincodeName;
 const mspOrg1 = 'Org1MSP';
 
 const walletPath = path.join(__dirname, 'wallet');
-
+config.walletPath = walletPath
 
 config.ccp = buildCCPOrg1();
 config.caClient = buildCAClient(FabricCAServices, config.ccp, 'ca.org1.example.com');
@@ -31,6 +32,7 @@ buildWallet(Wallets, walletPath).then( wallet => {
 });
 
 
+app.use(cors())
 app.use(express.json());
 
 

@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 var baseDir = '/run/media/coderdude/Adwait/Projects/btp_fabric/tutorials' 
-var baseDir = '/home/siddhant/HLFabric/'
+// var baseDir = '/home/siddhant/HLFabric/'
 
 exports.buildCCPOrg1 = () => {
 	// load the common connection configuration file

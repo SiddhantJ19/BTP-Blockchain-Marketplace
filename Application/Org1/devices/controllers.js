@@ -1,10 +1,13 @@
 // eslint-disable-next-line strict
-const { Gateway, Wallets } = require('fabric-network');
+const {Gateway, Wallets} = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const config = require('../config/base');
-const { network, contract } = require('../config/base');
-const { time } = require('console');
+const {readUserIdentity} = require("../users/service");
+const {getContractForUser} = require("../users/service");
+const {createNewuser} = require("../users/service");
+const {network, contract} = require('../config/base');
+const {time} = require('console');
 
 
 function prettyJSONString(inputString) {
@@ -20,7 +23,10 @@ exports.registerDevice = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId && assetDetails.description && assetDetails.dataDescription && assetDetails.deviceSecret)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, description, dataDescription, secret'});
+        return res.status(400).send({
+            status: 'invalid input',
+            required_fields: 'deviceId, description, dataDescription, secret'
+        });
     }
     console.log('\n--> Submit Transaction: RegisterDevice, Initialize Device Details');
     let createDeviceTxn = config.contract.createTransaction('CreateDevice');
@@ -37,7 +43,11 @@ exports.registerDevice = async (req, res) => {
     const txResult = await config.contract.evaluateTransaction('GetDeviceDetails', assetDetails.deviceId);
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Device Registered', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    await createNewuser(assetDetails.deviceId)
+    const deviceCertificate = JSON.parse(await readUserIdentity(assetDetails.deviceId))
+    let retData = JSON.parse(prettyJSONString(txResult.toString()))
+    retData["certificate"] = deviceCertificate
+    res.status(200).send({status: 'Device Registered', data: retData });
 };
 
 exports.updateDevice = async (req, res) => {
@@ -46,9 +56,9 @@ exports.updateDevice = async (req, res) => {
         description: req.body.description,
         on_sale: req.body.on_sale
     };
-    
+
     if (!(assetDetails.deviceId !== undefined && assetDetails.description !== undefined && assetDetails.on_sale !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, description, on_sale'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId, description, on_sale'});
     }
     console.log('\n--> Submit Transaction: UpdateDeviceDetails, ');
     let createDeviceTxn = config.contract.createTransaction('UpdateDeviceDetails');
@@ -65,7 +75,7 @@ exports.updateDevice = async (req, res) => {
     const txResult = await config.contract.evaluateTransaction('GetDeviceDetails', assetDetails.deviceId);
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Device Updated', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Device Updated', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
 exports.getDeviceDetails = async (req, res) => {
@@ -75,7 +85,7 @@ exports.getDeviceDetails = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId'});
     }
 
     console.log('\n--> Submit Transaction: GetDeviceDetails');
@@ -83,7 +93,7 @@ exports.getDeviceDetails = async (req, res) => {
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Details Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Details Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
 exports.getDeviceLatestData = async (req, res) => {
@@ -93,7 +103,7 @@ exports.getDeviceLatestData = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId'});
     }
 
     console.log('\n--> Submit Transaction: GetDeviceLatestData');
@@ -101,7 +111,7 @@ exports.getDeviceLatestData = async (req, res) => {
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
 exports.getDeviceAllData = async (req, res) => {
@@ -111,30 +121,56 @@ exports.getDeviceAllData = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId'});
     }
 
     console.log('\n--> Submit Transaction: GetDeviceAllData');
-    const txResult = await config.contract.evaluateTransaction('GetDeviceAllData', assetDetails.deviceId);
+    let txResult;
+    try {
+        txResult = await config.contract.evaluateTransaction('GetDeviceAllData', assetDetails.deviceId);
+    }catch (error){
+        console.log(error)
+        return res.status(400).send({status:'Request Failed', data:error.toString()})
+    }
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    return res.status(200).send({status: 'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
+exports.getDeviceTradeAgreementDetails = async (req, res) => {
+
+    const assetDetails = {
+        tradeId: req.body.tradeId
+    };
+
+    if (!(assetDetails.tradeId !== undefined)) {
+        return res.status(400).send({status: 'invalid input', required_fields: 'tradeId'});
+    }
+
+    console.log('\n--> Submit Transaction: GetDeviceDetails');
+    const txResult = await config.contract.evaluateTransaction('GetTradeAgreement', assetDetails.tradeId);
+    console.log(txResult.toString());
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    res.status(200).send({status: 'Details Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+};
 
 exports.newData = async (req, res) => {
+    const userCertificate = JSON.stringify(req.body.certificate)
     const dataDetails = {
         deviceId: req.body.deviceId,
         dataJSON: req.body.data
     };
-
-    if (!(dataDetails.deviceId !== undefined && dataDetails.dataJSON !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, dataJSON'});
+    if (!(dataDetails.deviceId !== undefined && dataDetails.dataJSON !== undefined && userCertificate !== undefined)) {
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId, dataJSON, certificate'});
     }
 
+    const deviceContract = await getContractForUser(dataDetails.deviceId, userCertificate)
+
+
     console.log('\n--> Submit Transaction: AddDeviceData, ');
-    let addDataTxn = config.contract.createTransaction('AddDeviceData');
+    let addDataTxn = deviceContract.createTransaction('AddDeviceData');
     const transientMapData = Buffer.from(JSON.stringify(dataDetails));
     addDataTxn.setTransient({
         _Data: transientMapData
@@ -147,11 +183,11 @@ exports.newData = async (req, res) => {
     // Fetch Data
 
     console.log('\n--> Submit Transaction: GetDeviceLatestData');
-    const txResult = await config.contract.evaluateTransaction('GetDeviceLatestData', dataDetails.deviceId);
+    const txResult = await deviceContract.evaluateTransaction('GetDeviceLatestData', dataDetails.deviceId);
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Data Added', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Data Added', data: JSON.parse(prettyJSONString(txResult.toString()))});
 
 };
 
@@ -162,7 +198,7 @@ exports.deleteDevice = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId'});
     }
 
     console.log('\n--> Submit Transaction: DeleteDevice');
@@ -170,7 +206,7 @@ exports.deleteDevice = async (req, res) => {
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Device Deleted', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Device Deleted', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
 exports.agreeToSell = async (req, res) => {
@@ -179,11 +215,15 @@ exports.agreeToSell = async (req, res) => {
         deviceId: req.body.deviceId,
         tradeId: req.body.tradeId,
         tradePrice: req.body.tradePrice,
-        revoke_time : new Date(req.body.revoke_time * 1000)
+        revoke_time: new Date(req.body.revoke_time * 1000)
     };
 
+    console.log(tradeDetails)
     if (!(tradeDetails.tradeId && tradeDetails.tradePrice && tradeDetails.deviceId)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, description, dataDescription, onSale'});
+        return res.status(400).send({
+            status: 'invalid input',
+            required_fields: 'deviceId, description, dataDescription, onSale'
+        });
     }
 
     // console.log(config.curUser, config.gateway)
@@ -202,7 +242,7 @@ exports.agreeToSell = async (req, res) => {
     console.log('\n--> Submit Transaction: GetTradeAgreement');
     const txResult = await config.contract.evaluateTransaction('GetTradeAgreement', tradeDetails.tradeId);
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
-    res.status(200).send({status:'Trade Agreement Created', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Trade Agreement Created', data: JSON.parse(prettyJSONString(txResult.toString()))});
     // res.status(200).send()
 };
 
@@ -231,7 +271,7 @@ exports.confirmSell = async (req, res) => {
     };
 
     if (!(tradeDetails.tradeId && tradeDetails.bidderId && tradeDetails.deviceId)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, tradeId, bidderId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId, tradeId, bidderId'});
     }
     let receipt = null;
     const listener = async (event) => {
@@ -247,18 +287,22 @@ exports.confirmSell = async (req, res) => {
     console.log('\nagreementDetails : ', agreementDetails.toString());
 
 
-    if(agreementDetails){
-            await config.contract.submitTransaction('GenerateReceipt', agreementDetails);
-            console.log('\nReceipt Tx submitted');
+    if (agreementDetails) {
+        await config.contract.submitTransaction('GenerateReceipt', agreementDetails);
+        console.log('\nReceipt Tx submitted');
 
-            let aclTx = config.contract.createTransaction('AddToACL');
-            const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
-            console.log('*** Result:');
-            console.log(resultACLTx.toString());
+        let aclTx = config.contract.createTransaction('AddToACL');
+        const resultACLTx = await aclTx.submit(tradeDetails.bidderId, tradeDetails.tradeId, tradeDetails.deviceId);
+        console.log('*** Result:');
+        console.log(resultACLTx.toString());
     }
 
 
-    res.status(200).send({status:'Transaction Confirmed', result:'Data will now be shared with bidder', receipt: receipt});
+    res.status(200).send({
+        status: 'Transaction Confirmed',
+        result: 'Data will now be shared with bidder',
+        receipt: receipt
+    });
 };
 
 exports.getSharedDeviceLatestData = async (req, res) => {
@@ -269,7 +313,7 @@ exports.getSharedDeviceLatestData = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId !== undefined && assetDetails.ownerOrg !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, ownerId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId, ownerId'});
     }
 
     console.log('\n--> Submit Transaction: GetDeviceSharedLatestData');
@@ -277,7 +321,7 @@ exports.getSharedDeviceLatestData = async (req, res) => {
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
 exports.getSharedDeviceAllData = async (req, res) => {
@@ -288,7 +332,7 @@ exports.getSharedDeviceAllData = async (req, res) => {
     };
 
     if (!(assetDetails.deviceId !== undefined && assetDetails.ownerOrg !== undefined)) {
-        return res.status(400).send({status:'invalid input', required_fields:'deviceId, ownerId'});
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId, ownerId'});
     }
 
 
@@ -297,12 +341,12 @@ exports.getSharedDeviceAllData = async (req, res) => {
     console.log(txResult.toString());
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
-    res.status(200).send({status:'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+    res.status(200).send({status: 'Data Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
 };
 
 const getSharedDevicesListByOwnerHelperFunc = async (ownerId) => {
     if (!(ownerId !== undefined)) {
-        return console.log({status:'invalid input', required_fields:'deviceId, ownerId'});
+        return console.log({status: 'invalid input', required_fields: 'ownerId'});
     }
 
     console.log(`\n--> Submit Transaction: QuerySharedDevices ${ownerId}`);
@@ -319,15 +363,17 @@ exports.getSharedDevicesList = async (req, res) => {
 
     const devicesList = [];
     for (let owner of ownersList) {
-        if (owner === config.msp) {continue;}
+        if (owner === config.msp) {
+            continue;
+        }
         const orgDevices = await getSharedDevicesListByOwnerHelperFunc(owner);
         console.log('org devic es', orgDevices);
-        for (let d of orgDevices){
+        for (let d of orgDevices) {
             devicesList.push(d);
         }
     }
 
-    return res.status(200).send({status:'Query Successful', data:devicesList});
+    return res.status(200).send({status: 'Query Successful', data: devicesList});
 
 };
 
@@ -340,9 +386,32 @@ exports.getOwnedDevices = async (req, res) => {
     console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
 
     const devicesList = JSON.parse(txResult.toString());
-    return res.status(200).send({status:'Query Successful', data:devicesList});
+    return res.status(200).send({status: 'Query Successful', data: devicesList});
 
 };
+
+exports.getTradeAgreementsForDevice = async (req, res) => {
+
+    const assetDetails = {
+        deviceId: req.body.deviceId,
+    };
+
+    if (!(assetDetails.deviceId !== undefined)) {
+        return res.status(400).send({status: 'invalid input', required_fields: 'deviceId'});
+    }
+
+
+    console.log('\n--> Submit Transaction: QueryTradeAgreementsForDevice');
+    const txResult = await config.contract.evaluateTransaction('QueryTradeAgreementsForDevice', assetDetails.deviceId);
+    console.log(txResult.toString());
+    if (!txResult.toString()) {
+        res.status(200).send({status: 'Trade Agreements Fetched', data: []});
+    }
+    console.log(`*** Result: ${prettyJSONString(txResult.toString())}`);
+
+    res.status(200).send({status: 'Trade Agreements Fetched', data: JSON.parse(prettyJSONString(txResult.toString()))});
+};
+
 
 /*
 exports.updateDeviceData = async (req, res) => {
