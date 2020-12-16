@@ -36,6 +36,7 @@ type InterestToken struct { // token of interest passed by the bidder
 	ID              string `json:"tradeId"`         // search all biddings for this device
 	DeviceId        string `json:"deviceId"`        // unique key as TRADE_{deviceID} on Collection_Marketplace
 	BidderID        string `json:"bidderId"`
+	SellerId        string `json:"seller_id"`
     TradeAgreementCollection string `json:"dealsCollection"` // required to generate private-data hash for the bidder's agreement collection:tradeID
 }
 // to be returned via event

@@ -116,13 +116,17 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
     // 2.2 unmarshal json to an object
     type interestTokenInputTransient struct {
         ID              string `json:"tradeId"`
-        DeviceId        string `json:"deviceId"`
+        DeviceId string `json:"deviceId"`
+        SellerId string `json:"seller_id"`
     }
+
 
     var interestTokenInput interestTokenInputTransient
     err = json.Unmarshal(interestTokenAsBytes, &interestTokenInput)
     if err != nil {}
 
+    fmt.Println("interestTokenInput")
+    fmt.Println(interestTokenInput)
     // 2.3 validate non empty fields
 
     //3. verify if clientMSP = peerMSP
@@ -143,6 +147,7 @@ func (s *SmartContract) CreateInterestToken (ctx contractapi.TransactionContextI
         ID: interestTokenInput.ID,
         DeviceId: interestTokenInput.DeviceId,
         BidderID: bidderOrgId,
+        SellerId: interestTokenInput.SellerId,
         TradeAgreementCollection: tradeAgreementCollection,
     }
 
@@ -194,4 +199,22 @@ func (s *SmartContract) GetInterestToken(ctx contractapi.TransactionContextInter
     if err != nil {}
 
     return interestTokenObject, nil
+}
+
+
+func (s *SmartContract) DeleteInterestToken(ctx contractapi.TransactionContextInterface, tradeId string) error {
+    interestToken, err := s.GetInterestToken(ctx, tradeId)
+    if err != nil {
+        return err
+    }
+    marketplaceCollection, _ := getMarketplaceCollection()
+    tradeKey := generateKeyForInterestToken(tradeId)
+
+    clientId, _ := ctx.GetClientIdentity().GetMSPID()
+    if  clientId == interestToken.SellerId || clientId == interestToken.BidderID {
+        err = ctx.GetStub().DelPrivateData(marketplaceCollection, tradeKey)
+    } else {
+        return fmt.Errorf("Not allowed to delete this token")
+    }
+    return nil
 }

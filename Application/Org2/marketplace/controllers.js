@@ -37,6 +37,7 @@ exports.wishToBuy = async (req, res) => {
         'tradeId': req.body.tradeId,
         'deviceId': req.body.deviceId,
         'tradePrice': req.body.tradePrice,
+        'seller_id' : req.body.seller_id,  
         'revoke_time': new Date(req.body.revoke_time * 1000)
     }
     console.log("tradeDetails\n", tradeDetails)
