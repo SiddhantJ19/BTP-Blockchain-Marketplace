@@ -102,24 +102,24 @@ func (s *SmartContract) QueryTradeAgreementsForDevice(ctx contractapi.Transactio
 	return constructTradeAgreementsQueryResponseFromIterator(resultsIterator)
 }
 
-func (s *SmartContract) QueryACLForDevice(ctx contractapi.TransactionContextInterface, deviceId string) (DeviceACL, error) {
+func (s *SmartContract) QueryACLForDevice(ctx contractapi.TransactionContextInterface, deviceId string) (*DeviceACL, error) {
     aclCollection, _ := getACLCollection(ctx)
 
     aclAsBytes, err := ctx.GetStub().GetPrivateData(aclCollection, deviceId)
     if err != nil {
         fmt.Println("No ACL for the Device")
         fmt.Println(err.Error())
-        return DeviceACL{}, fmt.Errorf("No ACL for the device", err.Error())
+        return nil, fmt.Errorf("No ACL for the device", err.Error())
     }
     if aclAsBytes ==  nil {
         fmt.Println("Empty ACL")
-        return DeviceACL{ID: nil, }, fmt.Errorf("Empty ACL")
+        return nil, fmt.Errorf("Empty ACL")
     }
     var acl DeviceACL
     err = json.Unmarshal(aclAsBytes, &acl)
     if err != nil {}
     fmt.Println(acl)
-    return acl, nil
+    return &acl, nil
 }
 
 
