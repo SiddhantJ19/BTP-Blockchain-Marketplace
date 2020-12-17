@@ -53,7 +53,7 @@ exports.getContractForUser = async (username, certificate) => {
 
     const network = await gateway.getNetwork(channelName);
     const contract = network.getContract(chaincodeName);
-    contract.addDiscoveryInterest({name: 'mychaincode', collectionNames: ['Org1MSP_aclCollection']});
+    contract.addDiscoveryInterest({name: 'mychaincode', collectionNames: ['Org2MSP_aclCollection']});
 
     return contract
 }
