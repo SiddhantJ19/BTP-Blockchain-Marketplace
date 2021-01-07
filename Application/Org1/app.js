@@ -9,7 +9,7 @@ const { buildCCPOrg1, buildWallet } = require('../../../test-application/javascr
 
 const constants = {
     CHANNEL_NAME: 'mychannel',
-    CHAINCODE_NAME: '--------', // package name ?
+    CHAINCODE_NAME: 'mychaincode', // package name ?
     MSP_ORG1: 'Org1MSP',
     WALLET_PATH: path.join(__dirname, 'wallet'),
     USER_ID: 'appUserOrg1'
